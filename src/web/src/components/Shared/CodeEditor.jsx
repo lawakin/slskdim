@@ -8,8 +8,6 @@ import CodeMirror from '@uiw/react-codemirror';
 import React from 'react';
 
 const CodeEditor = ({ onChange = () => {}, theme, value, ...rest }) => {
-  console.log(defaultHighlightStyle);
-
   return (
     <CodeMirror
       extensions={[
@@ -17,7 +15,7 @@ const CodeEditor = ({ onChange = () => {}, theme, value, ...rest }) => {
         syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
       ]}
       onChange={(newValue) => onChange(newValue)}
-      theme={theme}
+      theme={theme || undefined}
       value={value}
       {...rest}
     />

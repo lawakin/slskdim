@@ -19,7 +19,7 @@ const FileList = ({
   const [folded, setFolded] = useState(false);
 
   return (
-    <div style={{ opacity: locked ? 0.5 : 1 }}>
+    <div className={locked ? 'muted' : ''}>
       <Header
         className="filelist-header"
         size="small"

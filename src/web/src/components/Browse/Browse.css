@@ -1,6 +1,6 @@
 .browse-segment {
   margin-top: 15px !important;
-  height: 78px !important;
+  height: var(--segment-header-height) !important;
   display: flex;
 }
 
@@ -56,13 +56,13 @@
   padding: 1em !important;
 }
 
-.ui.list .list, ol.ui.list ol, ul.ui.list ul {
+.browse-folderlist .ui.list .list, .browse-folderlist ol.ui.list ol, .browse-folderlist ul.ui.list ul {
   padding-left: 0px !important;
   padding-top: 3px !important;
   padding-bottom: 0px !important;
 }
 
-.ui.list .list>.item>.icon+.content, .ui.list .list>.item>.image+.content, .ui.list>.item>.icon+.content, .ui.list>.item>.image+.content {
+.browse-folderlist .ui.list .list>.item>.icon+.content, .browse-folderlist .ui.list .list>.item>.image+.content, .browse-folderlist .ui.list>.item>.icon+.content, .browse-folderlist .ui.list>.item>.image+.content {
   padding-left: 0px !important;
 }
 

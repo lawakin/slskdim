@@ -26,12 +26,8 @@ const ShareTable = ({ onClick, shares }) => {
             shares.length === 0 && (
               <Table.Row>
                 <Table.Cell
+                  className="empty-state-cell"
                   colSpan={6}
-                  style={{
-                    opacity: 0.5,
-                    padding: '10px !important',
-                    textAlign: 'center',
-                  }}
                 >
                   No shares configured
                 </Table.Cell>

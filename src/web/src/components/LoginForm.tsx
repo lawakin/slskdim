@@ -1,5 +1,5 @@
 import Logos from './Shared/Logo';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Button,
   Checkbox,
@@ -18,8 +18,20 @@ const initialState = {
   username: '',
 };
 
-const LoginForm = ({ error, loading, onLoginAttempt }) => {
-  const usernameInput = useRef();
+const LoginForm = ({
+  error,
+  loading,
+  onLoginAttempt,
+}: {
+  readonly error: unknown;
+  readonly loading: boolean;
+  readonly onLoginAttempt: (
+    username: string,
+    password: string,
+    rememberMe: boolean,
+  ) => void;
+}) => {
+  const usernameInput = useRef<Input>(null);
   const [state, setState] = useState(initialState);
   const [ready, setReady] = useState(false);
   const logo = useMemo(
@@ -39,11 +51,11 @@ const LoginForm = ({ error, loading, onLoginAttempt }) => {
     usernameInput.current?.focus();
   }, [loading]);
 
-  const handleChange = (field, value) => {
-    setState({
-      ...state,
-      [field]: value,
-    });
+  const handleChange = (
+    field: keyof typeof initialState,
+    value: string | boolean,
+  ) => {
+    setState((previous) => ({ ...previous, [field]: value }));
   };
 
   const { password, rememberMe, username } = state;
@@ -114,7 +126,7 @@ const LoginForm = ({ error, loading, onLoginAttempt }) => {
               negative
             >
               <Icon name="x" />
-              {error.message}
+              {error instanceof Error ? error.message : String(error)}
             </Message>
           )}
         </Form>

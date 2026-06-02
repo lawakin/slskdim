@@ -6,6 +6,13 @@ import * as relayAPI from '../lib/relay';
 import { connect, disconnect } from '../lib/server';
 import * as session from '../lib/session';
 import { isPassthroughEnabled } from '../lib/token';
+import {
+  type ApplicationState,
+  type ConnectionWatchdogState,
+  type RelayControllerState,
+  type ServerState,
+  type UserState,
+} from '../types';
 import AppContext from './AppContext';
 import Browse from './Browse/Browse';
 import Chat from './Chat/Chat';
@@ -15,8 +22,9 @@ import Searches from './Search/Searches';
 import ErrorSegment from './Shared/ErrorSegment';
 import System from './System/System';
 import Transfers from './Transfers/Transfers';
+import UIConfigContext from './UIConfigContext';
 import Users from './Users/Users';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import {
@@ -27,16 +35,18 @@ import {
   Menu,
   Modal,
   Segment,
+  type SemanticCOLORS,
+  type SemanticICONS,
   Sidebar,
 } from 'semantic-ui-react';
 
 const initialState = {
-  applicationOptions: {},
-  applicationState: {},
+  applicationOptions: {} as Record<string, unknown>,
+  applicationState: {} as ApplicationState,
   error: false,
   initialized: false,
   login: {
-    error: undefined,
+    error: undefined as unknown,
     pending: false,
   },
   retriesExhausted: false,
@@ -45,15 +55,24 @@ const initialState = {
 const ModeSpecificConnectButton = ({
   connectionWatchdog,
   controller = {},
+  isHorizontal,
   mode,
   pendingReconnect,
   server,
   user,
+}: {
+  readonly connectionWatchdog: ConnectionWatchdogState;
+  readonly controller: RelayControllerState;
+  readonly isHorizontal: boolean;
+  readonly mode: unknown;
+  readonly pendingReconnect: unknown;
+  readonly server: ServerState;
+  readonly user: UserState;
 }) => {
   if (mode === 'Agent') {
     const isConnected = controller?.state === 'Connected';
     const isTransitioning = ['Connecting', 'Reconnecting'].includes(
-      controller?.state,
+      controller?.state ?? '',
     );
 
     return (
@@ -103,7 +122,7 @@ const ModeSpecificConnectButton = ({
               />
             )}
           </Icon.Group>
-          Connected
+          {isHorizontal && 'Connected'}
         </Menu.Item>
       );
     }
@@ -113,17 +132,25 @@ const ModeSpecificConnectButton = ({
     // - nothing. the client was manually disconnected, kicked off by another login, etc., and we're not trying to connect
     // - actively trying to make a connection to the server
     // - still trying to connect, but waiting for the next connection attempt
-    let icon = 'close';
-    let color = 'red';
+    let icon: SemanticICONS = 'close';
+    let color: SemanticCOLORS = 'red';
+    let label = 'Disconnected';
 
     if (connectionWatchdog?.isAttemptingConnection) {
       icon = 'clock';
       color = 'yellow';
+      label = 'Waiting...';
     }
 
-    if (server?.isConnecting || server?.IsLoggingIn) {
-      icon = 'sync alternate loading';
+    // eslint-disable-next-line no-warning-comments
+    // TODO: figure out why the original code had this?
+    // likely just deadcode but
+    // if (server?.isConnecting || server?.IsLoggingIn) {
+    if (server?.isConnecting) {
+      // i do not know why typescript refuses to see this
+      icon = 'sync alternate loading' as SemanticICONS;
       color = 'green';
+      label = 'Connecting...';
     }
 
     return (
@@ -140,39 +167,26 @@ const ModeSpecificConnectButton = ({
             name={icon}
           />
         </Icon.Group>
-        Disconnected
+        {isHorizontal && label}
       </Menu.Item>
     );
   }
 };
 
-class App extends Component {
-  constructor(props) {
+class App extends Component<Record<string, never>, typeof initialState> {
+  public constructor(props: {} | Readonly<{}>) {
     super(props);
 
     this.state = initialState;
   }
 
-  componentDidMount() {
-    if (this.getSavedTheme() == null) {
-      window
-        .matchMedia('(prefers-color-scheme: dark)')
-        .addEventListener(
-          'change',
-          (event) => event.matches && this.setState({ theme: 'dark' }),
-        );
-      window
-        .matchMedia('(prefers-color-scheme: light)')
-        .addEventListener(
-          'change',
-          (event) => event.matches && this.setState({ theme: 'light' }),
-        );
-    }
-
+  public componentDidMount() {
     this.init();
   }
 
-  init = async () => {
+  public static contextType = UIConfigContext;
+
+  public init = async () => {
     this.setState({ initialized: false }, async () => {
       try {
         const securityEnabled = await session.getSecurityEnabled();
@@ -206,11 +220,6 @@ class App extends Component {
           await appHub.start();
         }
 
-        const savedTheme = this.getSavedTheme();
-        if (savedTheme != null) {
-          this.setState({ theme: savedTheme });
-        }
-
         this.setState({
           error: false,
         });
@@ -223,19 +232,11 @@ class App extends Component {
     });
   };
 
-  getSavedTheme = () => {
-    return localStorage.getItem('slskd-theme');
-  };
-
-  toggleTheme = () => {
-    this.setState((state) => {
-      const newTheme = state.theme === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('slskd-theme', newTheme);
-      return { theme: newTheme };
-    });
-  };
-
-  handleLogin = (username, password, rememberMe) => {
+  public handleLogin = (
+    username: string,
+    password: string,
+    rememberMe: boolean,
+  ) => {
     this.setState(
       (previousState) => ({
         login: { ...previousState.login, error: undefined, pending: true },
@@ -258,17 +259,17 @@ class App extends Component {
     );
   };
 
-  logout = () => {
+  public logout = () => {
     session.logout();
     this.setState({ login: { ...initialState.login } });
   };
 
-  withTokenCheck = (component) => {
+  public withTokenCheck = (component: React.JSX.Element): React.JSX.Element => {
     session.check(); // async, runs in the background
-    return { ...component };
+    return component;
   };
 
-  render() {
+  public render() {
     const {
       applicationOptions = {},
       applicationState = {},
@@ -276,11 +277,10 @@ class App extends Component {
       initialized,
       login,
       retriesExhausted,
-      theme = this.getSavedTheme() ||
-        (window.matchMedia('(prefers-color-scheme: dark)').matches
-          ? 'dark'
-          : 'light'),
     } = this.state;
+    const [config] = this.context;
+    const { barPosition } = config;
+    const isHorizontal = barPosition === 'top' || barPosition === 'bottom';
     const {
       connectionWatchdog = {},
       pendingReconnect,
@@ -327,7 +327,7 @@ class App extends Component {
       return (
         <LoginForm
           error={login.error}
-          initialized={login.initialized}
+          // initialized={login.initialized}
           loading={login.pending}
           onLoginAttempt={this.handleLogin}
         />
@@ -335,12 +335,6 @@ class App extends Component {
     }
 
     const isAgent = mode === 'Agent';
-
-    if (theme === 'dark') {
-      document.documentElement.classList.add(theme);
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
 
     return (
       <>
@@ -351,13 +345,15 @@ class App extends Component {
           <Sidebar
             animation="overlay"
             as={Menu}
-            className="navigation"
-            direction="top"
-            horizontal="true"
+            className={
+              isHorizontal ? 'navigation-horizontal' : 'navigation-vertical'
+            }
+            direction={barPosition}
+            height="thin"
             icon="labeled"
             inverted
+            vertical={!isHorizontal}
             visible
-            width="thin"
           >
             {version.isCanary && (
               <Menu.Item>
@@ -419,109 +415,102 @@ class App extends Component {
                 </Link>
               </>
             )}
-            <Menu
-              className="right"
-              inverted
-            >
-              <Menu.Item onClick={() => this.toggleTheme()}>
-                <Icon name="theme" />
-                Theme
+            <div className="navigation-spacer" />
+            <ModeSpecificConnectButton
+              connectionWatchdog={connectionWatchdog}
+              controller={controller}
+              isHorizontal={isHorizontal}
+              mode={mode}
+              pendingReconnect={pendingReconnect}
+              server={server}
+              user={user}
+            />
+            {(pendingReconnect || pendingRestart || pendingShareRescan) && (
+              <Menu.Item>
+                <Icon.Group className="menu-icon-group">
+                  <Link to={`${urlBase}/system/info`}>
+                    <Icon
+                      color="yellow"
+                      name="exclamation circle"
+                    />
+                  </Link>
+                </Icon.Group>
+                Pending Action
               </Menu.Item>
-              <ModeSpecificConnectButton
-                connectionWatchdog={connectionWatchdog}
-                controller={controller}
-                mode={mode}
-                pendingReconnect={pendingReconnect}
-                server={server}
-                user={user}
-              />
-              {(pendingReconnect || pendingRestart || pendingShareRescan) && (
-                <Menu.Item position="right">
-                  <Icon.Group className="menu-icon-group">
-                    <Link to={`${urlBase}/system/info`}>
+            )}
+            {isUpdateAvailable && (
+              <Modal
+                centered
+                closeIcon
+                size="mini"
+                trigger={
+                  <Menu.Item>
+                    <Icon.Group className="menu-icon-group">
                       <Icon
                         color="yellow"
-                        name="exclamation circle"
+                        name="bullhorn"
                       />
-                    </Link>
-                  </Icon.Group>
-                  Pending Action
-                </Menu.Item>
-              )}
-              {isUpdateAvailable && (
-                <Modal
-                  centered
-                  closeIcon
-                  size="mini"
-                  trigger={
-                    <Menu.Item position="right">
-                      <Icon.Group className="menu-icon-group">
-                        <Icon
-                          color="yellow"
-                          name="bullhorn"
-                        />
-                      </Icon.Group>
-                      New Version!
-                    </Menu.Item>
-                  }
-                >
-                  <Modal.Header>New Version!</Modal.Header>
-                  <Modal.Content>
-                    <p>
-                      You are currently running version{' '}
-                      <strong>{current}</strong>
-                      while version <strong>{latest}</strong> is available.
-                    </p>
-                  </Modal.Content>
-                  <Modal.Actions>
-                    <Button
-                      fluid
-                      href="https://github.com/slskd/slskd/releases"
-                      primary
-                      style={{ marginLeft: 0 }}
-                    >
-                      See Release Notes
-                    </Button>
-                  </Modal.Actions>
-                </Modal>
-              )}
-              <Link to={`${urlBase}/system`}>
-                <Menu.Item>
-                  <Icon name="cogs" />
-                  System
-                </Menu.Item>
-              </Link>
-              {session.isLoggedIn() && (
-                <Modal
-                  actions={[
-                    'Cancel',
-                    {
-                      content: 'Log Out',
-                      key: 'done',
-                      negative: true,
-                      onClick: this.logout,
-                    },
-                  ]}
-                  centered
-                  content="Are you sure you want to log out?"
-                  header={
-                    <Header
-                      content="Confirm Log Out"
-                      icon="sign-out"
-                    />
-                  }
-                  size="mini"
-                  trigger={
-                    <Menu.Item>
-                      <Icon name="sign-out" />
-                      Log Out
-                    </Menu.Item>
-                  }
-                />
-              )}
-            </Menu>
+                    </Icon.Group>
+                    New Version!
+                  </Menu.Item>
+                }
+              >
+                <Modal.Header>New Version!</Modal.Header>
+                <Modal.Content>
+                  <p>
+                    {/* You are currently running version{' '} */}
+                    <strong>{current}</strong>
+                    while version <strong>{latest}</strong> is available.
+                  </p>
+                </Modal.Content>
+                <Modal.Actions>
+                  <Button
+                    fluid
+                    href="https://github.com/slskd/slskd/releases"
+                    primary
+                    style={{ marginLeft: 0 }}
+                  >
+                    See Release Notes
+                  </Button>
+                </Modal.Actions>
+              </Modal>
+            )}
+            <Link to={`${urlBase}/system`}>
+              <Menu.Item>
+                <Icon name="cogs" />
+                System
+              </Menu.Item>
+            </Link>
+            {session.isLoggedIn() && (
+              <Modal
+                actions={[
+                  'Cancel',
+                  {
+                    content: 'Log Out',
+                    key: 'done',
+                    negative: true,
+                    onClick: this.logout,
+                  },
+                ]}
+                centered
+                content="Are you sure you want to log out?"
+                header={
+                  <Header
+                    content="Confirm Log Out"
+                    icon="sign-out"
+                  />
+                }
+                size="mini"
+                trigger={
+                  <Menu.Item>
+                    <Icon name="sign-out" />
+                    Log Out
+                  </Menu.Item>
+                }
+              />
+            )}
           </Sidebar>
-          <Sidebar.Pusher className="app-content">
+          <Sidebar.Pusher className={`app-content app-content-${barPosition}`}>
             <AppContext.Provider
               // eslint-disable-next-line no-warning-comments
               // TODO: needs useMemo, but class component. yolo for now.
@@ -551,54 +540,40 @@ class App extends Component {
                 <Switch>
                   <Route
                     path={`${urlBase}/searches/:id?`}
-                    render={(props) =>
+                    render={() =>
                       this.withTokenCheck(
                         <div className="view">
-                          <Searches
-                            server={applicationState.server}
-                            {...props}
-                          />
+                          <Searches />
                         </div>,
                       )
                     }
                   />
                   <Route
                     path={`${urlBase}/browse`}
-                    render={(props) =>
-                      this.withTokenCheck(<Browse {...props} />)
-                    }
+                    render={() => this.withTokenCheck(<Browse />)}
                   />
                   <Route
                     path={`${urlBase}/users`}
-                    render={(props) =>
-                      this.withTokenCheck(<Users {...props} />)
-                    }
+                    render={() => this.withTokenCheck(<Users />)}
                   />
                   <Route
                     path={`${urlBase}/chat`}
-                    render={(props) =>
-                      this.withTokenCheck(
-                        <Chat
-                          {...props}
-                          state={applicationState}
-                        />,
-                      )
+                    render={() =>
+                      this.withTokenCheck(<Chat state={applicationState} />)
                     }
                   />
                   <Route
                     path={`${urlBase}/rooms`}
-                    render={(props) =>
-                      this.withTokenCheck(<Rooms {...props} />)
-                    }
+                    render={() => this.withTokenCheck(<Rooms />)}
                   />
                   <Route
                     path={`${urlBase}/uploads`}
-                    render={(props) =>
+                    render={() =>
                       this.withTokenCheck(
                         <div className="view">
                           <Transfers
-                            {...props}
                             direction="upload"
+                            server={server}
                           />
                         </div>,
                       )
@@ -606,11 +581,10 @@ class App extends Component {
                   />
                   <Route
                     path={`${urlBase}/downloads`}
-                    render={(props) =>
+                    render={() =>
                       this.withTokenCheck(
                         <div className="view">
                           <Transfers
-                            {...props}
                             direction="download"
                             server={applicationState.server}
                           />
@@ -620,13 +594,11 @@ class App extends Component {
                   />
                   <Route
                     path={`${urlBase}/system/:tab?`}
-                    render={(props) =>
+                    render={() =>
                       this.withTokenCheck(
                         <System
-                          {...props}
                           options={applicationOptions}
                           state={applicationState}
-                          theme={theme}
                         />,
                       )
                     }

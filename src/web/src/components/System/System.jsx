@@ -1,5 +1,6 @@
 import './System.css';
 import { Switch } from '../Shared';
+import Appearance from './Appearance';
 import Data from './Data';
 import Events from './Events';
 import Files from './Files';
@@ -11,7 +12,7 @@ import React from 'react';
 import { Redirect, useHistory, useRouteMatch } from 'react-router-dom';
 import { Icon, Menu, Segment, Tab } from 'semantic-ui-react';
 
-const System = ({ options = {}, state = {}, theme }) => {
+const System = ({ options = {}, state = {}, theme = '' }) => {
   const {
     params: { tab },
     ...route
@@ -146,6 +147,19 @@ const System = ({ options = {}, state = {}, theme }) => {
         </Tab.Pane>
       ),
       route: 'logs',
+    },
+    {
+      menuItem: {
+        content: 'Appearance',
+        icon: 'paint brush',
+        key: 'appearance',
+      },
+      render: () => (
+        <Tab.Pane>
+          <Appearance />
+        </Tab.Pane>
+      ),
+      route: 'appearance',
     },
   ];
 

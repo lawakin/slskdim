@@ -43,7 +43,7 @@ const RoomUserList = ({ users }) => {
           className={user.self ? 'room-user-self' : ''}
           key={user.username}
         >
-          <List.Content style={{ opacity: user.status === 'Online' ? 1 : 0.5 }}>
+          <List.Content className={user.status === 'Online' ? '' : 'muted'}>
             <Popup
               content={getDetails(user)}
               trigger={getFlag(user)}

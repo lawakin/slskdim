@@ -77,12 +77,8 @@ const Events = () => {
           {events?.length === 0 ? (
             <Table.Row>
               <Table.Cell
+                className="empty-state-cell"
                 colSpan={99}
-                style={{
-                  opacity: 0.5,
-                  padding: '10px !important',
-                  textAlign: 'center',
-                }}
               >
                 No events
               </Table.Cell>

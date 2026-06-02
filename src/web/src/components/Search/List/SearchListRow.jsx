@@ -46,11 +46,11 @@ const SearchListRow = ({ onRemove, onStop, search }) => {
       </Table.Cell>
       <Table.Cell>
         <SearchActionIcon
+          className="clickable"
           loading={working}
           onRemove={() => invoke(() => onRemove(search))}
           onStop={() => invoke(() => onStop(search))}
           search={search}
-          style={{ cursor: 'pointer' }}
         />
       </Table.Cell>
     </Table.Row>

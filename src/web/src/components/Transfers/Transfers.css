@@ -1,6 +1,6 @@
 .transfers-header-segment {
   margin-top: 15px !important;
-  height: 78px !important;
+  height: var(--segment-header-height) !important;
   padding-top: 14px !important;
   display: flex;
 }
@@ -17,7 +17,7 @@
 }
 
 .transfer-button {
-  color: black;
+  color: var(--smui-site-body-text-color, black);
 }
 
 .transfer-card {
@@ -27,9 +27,9 @@
 }
 
 .transfer-segment {
-  margin-top: 16px;
-  padding-left: 15px;
-  padding-right: 15px;
+  margin-top: var(--card-bottom-margin);
+  padding-left: var(--content-padding-h);
+  padding-right: var(--content-padding-h);
 }
 
 .transfer-placeholder {

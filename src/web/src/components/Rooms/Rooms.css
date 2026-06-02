@@ -5,17 +5,17 @@
 }
 
 .rooms {
-  padding-left: 15px;
-  padding-right: 15px;
-  max-width: 1200px !important;
+  padding-left: var(--content-padding-h);
+  padding-right: var(--content-padding-h);
+  max-width: var(--content-max-width) !important;
   margin-left: auto !important;
   margin-right: auto !important;
-  margin-bottom: 16px;
+  margin-bottom: var(--card-bottom-margin);
 }
 
 .rooms-segment {
   margin-top: 15px !important;
-  height: 78px;
+  height: var(--segment-header-height);
   display: flex;
 }
 
@@ -47,7 +47,7 @@
   border-radius: 0%;
 }
 
-.join-room-modal > .content > .table > thead > tr > th > .icon {
+.join-room-modal th .icon {
   float: right !important;
 }
 
@@ -60,7 +60,7 @@
 .room {
   display: flex;
   margin-top: 1rem;
-  height: calc(100vh - 255px);
+  height: calc(100vh - var(--chat-history-offset));
 }
 
 .room-active-card {
@@ -81,7 +81,7 @@
   overscroll-behavior-y: contain;
   scroll-snap-type: y proximity;
   display: grid;
-  height: calc(100vh - 292px);
+  height: calc(100vh - var(--chat-input-offset));
 }
 
 .room-history > .list {
@@ -117,7 +117,7 @@
 }
 
 .room-message-self, .room-user-self {
-  color: blue;
+  color: var(--smui-site-link-color, blue);
 }
 
 .room-input {

@@ -23,7 +23,7 @@ module.exports = {
         'canonical/react',
         'canonical/prettier',
       ],
-      files: ['*.jsx'],
+      files: ['*.jsx', '*.tsx'],
       parserOptions: {
         babelOptions: {
           parserOpts: {
@@ -37,8 +37,15 @@ module.exports = {
       },
     },
     {
+      extends: ['canonical/typescript', 'canonical/prettier'],
+      files: ['*.ts', '*.tsx'],
+      rules: {
+        ...overrides,
+      },
+    },
+    {
       extends: ['canonical/jest'],
-      files: '*.test.{js,jsx}',
+      files: '*.test.{js,jsx,ts,tsx}',
     },
   ],
   root: true,

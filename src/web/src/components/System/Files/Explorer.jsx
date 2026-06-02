@@ -49,9 +49,9 @@ const FileRow = ({
           size="small"
           trigger={
             <Icon
+              className="clickable"
               color="red"
               name="trash alternate"
-              style={{ cursor: 'pointer' }}
             />
           }
         />
@@ -72,8 +72,8 @@ const DirectoryRow = ({
 }) => (
   <Table.Row key={name}>
     <Table.Cell
+      className="clickable"
       onClick={onClick}
-      style={{ cursor: 'pointer' }}
     >
       <Icon name="folder" />
       {name}
@@ -109,9 +109,9 @@ const DirectoryRow = ({
           size="small"
           trigger={
             <Icon
+              className="clickable"
               color="red"
               name="trash alternate"
-              style={{ cursor: 'pointer' }}
             />
           }
         />
@@ -213,9 +213,8 @@ const Explorer = ({ remoteFileManagement, root }) => {
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell
-              className="explorer-list-name"
+              className="explorer-list-name clickable"
               onClick={() => handleSort('name')}
-              style={{ cursor: 'pointer' }}
             >
               Name
               {sortColumn === 'name' && (
@@ -229,9 +228,8 @@ const Explorer = ({ remoteFileManagement, root }) => {
               )}
             </Table.HeaderCell>
             <Table.HeaderCell
-              className="explorer-list-date"
+              className="explorer-list-date clickable"
               onClick={() => handleSort('date')}
-              style={{ cursor: 'pointer' }}
             >
               Date Modified
               {sortColumn === 'date' && (
