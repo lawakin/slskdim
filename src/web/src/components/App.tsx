@@ -23,6 +23,7 @@ import Searches from './Search/Searches';
 import ErrorSegment from './Shared/ErrorSegment';
 import System from './System/System';
 import Transfers from './Transfers/Transfers';
+import { Label } from './ui/label';
 import UIConfigContext from './UIConfigContext';
 import Users from './Users/Users';
 import { Button } from '@/components/ui/button';
@@ -63,7 +64,6 @@ import { ToastContainer } from 'react-toastify';
 const ModeSpecificConnectButton = ({
   connectionWatchdog,
   controller = {},
-  isHorizontal,
   mode,
   pendingReconnect,
   server,
@@ -71,7 +71,6 @@ const ModeSpecificConnectButton = ({
 }: {
   readonly connectionWatchdog: ConnectionWatchdogState;
   readonly controller: RelayControllerState;
-  readonly isHorizontal: boolean;
   readonly mode: unknown;
   readonly pendingReconnect: unknown;
   readonly server: ServerState;
@@ -124,7 +123,7 @@ const ModeSpecificConnectButton = ({
             <Star className="menu-icon-no-shadow absolute -bottom-1 -right-1 h-2 w-2 text-yellow-400" />
           )}
         </div>
-        {isHorizontal && 'Connected'}
+        <Label> Connected </Label>
       </button>
     );
   }
@@ -157,7 +156,7 @@ const ModeSpecificConnectButton = ({
           className={`menu-icon-no-shadow absolute -bottom-1 -right-1 h-2 w-2 ${iconColorClass}`}
         />
       </div>
-      {isHorizontal && label}
+      <Label> {label} </Label>
     </button>
   );
 };
@@ -369,15 +368,16 @@ const App = () => {
             </>
           )}
           <div className="navigation-spacer" />
-          <ModeSpecificConnectButton
-            connectionWatchdog={connectionWatchdog}
-            controller={controller}
-            isHorizontal={isHorizontal}
-            mode={mode}
-            pendingReconnect={pendingReconnect}
-            server={server}
-            user={user}
-          />
+          <div>
+            <ModeSpecificConnectButton
+              connectionWatchdog={connectionWatchdog}
+              controller={controller}
+              mode={mode}
+              pendingReconnect={pendingReconnect}
+              server={server}
+              user={user}
+            />
+          </div>
           {(pendingReconnect || pendingRestart || pendingShareRescan) && (
             <div className="menu-item">
               <div className="menu-icon-group relative">

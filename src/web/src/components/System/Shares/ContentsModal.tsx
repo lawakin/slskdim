@@ -15,12 +15,12 @@ const ContentsModal = ({
   share,
 }: {
   readonly onClose: () => void;
-  readonly share: Share;
+  readonly share?: Share;
 }) => {
   const [loading, setLoading] = useState(true);
   const [contents, setContents] = useState<string>('');
 
-  const { id, localPath, remotePath } = share;
+  const { id, localPath, remotePath } = share ?? {};
 
   useEffect(() => {
     const fetch = async () => {

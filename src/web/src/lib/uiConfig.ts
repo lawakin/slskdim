@@ -31,6 +31,12 @@ export const UI_CONFIG_SCHEMA = {
     default: 'left' as const,
     options: ['left', 'right', 'top', 'bottom'] as const,
   },
+
+  text_color: {
+    type: 'color' as const,
+    label: 'Text Color',
+    default: '#FFFFFF',
+  },
   background_color: {
     type: 'color' as const,
     label: 'Background Color',
@@ -41,10 +47,47 @@ export const UI_CONFIG_SCHEMA = {
     label: 'Secondary Background Color',
     default: '#101010',
   },
+
+  muted_background_color: {
+    type: 'color' as const,
+    label: 'Muted Background Color',
+    default: '#101010',
+  },
+
   primary_color: {
     type: 'color' as const,
     label: 'Primary Color',
     default: '#101010',
+  },
+
+  primary_foreground_color: {
+    type: 'color' as const,
+    label: 'Primary Foreground Color',
+    default: '#ffffff',
+  },
+
+  muted_foreground_color: {
+    type: 'color' as const,
+    label: 'Muted Foreground Color',
+    default: '#888888',
+  },
+
+  border_color: {
+    type: 'color' as const,
+    label: 'Border Color',
+    default: '#333333',
+  },
+
+  ring_color: {
+    type: 'color' as const,
+    label: 'Ring Color',
+    default: '#555555',
+  },
+
+  destructive_color: {
+    type: 'color' as const,
+    label: 'Destructive Color',
+    default: '#cc0000',
   },
 } satisfies Record<string, FieldSchema>;
 

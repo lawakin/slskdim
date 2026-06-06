@@ -1,12 +1,13 @@
 import { Switch } from '../../Shared';
 import {
+  Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Table, X } from 'lucide-react';
+import { X } from 'lucide-react';
 
 const ExclusionTable = ({ exclusions = [] } = {}) => {
   return (

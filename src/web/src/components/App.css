@@ -11,19 +11,38 @@
     --slskd-browse-folderlist-header-color: black;
     --slskd-browse-folderlist-header-selected-color: #0E6EB8;
 
-    --slskdim-background1-color: #111;
-    --slskdim-background2-color: #222;
-    --slskdim-background3-color: #333;
+    --slskdim-text-color: #fff;
+
+    --slskdim-primary-background: #111;
+    --slskdim-secondary-background: #111;
+    --slskdim-muted-background: #111;
 
     --slskdim-primary-color: #00a;
+    --slskdim-primary-foreground: #ffffff;
     --slskdim-secondary-color: #078;
     --slskdim-error-color: #b00;
     --slskdim-success-color: #0b0;
+    --slskdim-muted-foreground: #888888;
+    --slskdim-border: #333333;
+    --slskdim-ring: #555555;
+    --slskdim-destructive: #cc0000;
 }
 
 body {
-    background-color: var(--background-color);
-    background-color: #fff;
+    --background: var(--slskdim-primary-background);
+    --foreground: var(--slskdim-text-color);
+    --card: var(--slskdim-secondary-background);
+    --card-foreground: var(--slskdim-text-color);
+    --popover: var(--slskdim-secondary-background);
+    --popover-foreground: var(--slskdim-text-color);
+    --primary: var(--slskdim-primary-color);
+    --primary-foreground: var(--slskdim-primary-foreground);
+    --muted: var(--slskdim-muted-background);
+    --muted-foreground: var(--slskdim-muted-foreground);
+    --border: var(--slskdim-border);
+    --input: var(--slskdim-border);
+    --ring: var(--slskdim-ring);
+    --destructive: var(--slskdim-destructive);
 }
 
 .ui.table td,
@@ -59,10 +78,21 @@ th {
     display: flex;
 }
 
-.app-left  { flex-direction: row; }
-.app-right { flex-direction: row-reverse; }
-.app-top   { flex-direction: column; }
-.app-bottom { flex-direction: column-reverse; }
+.app-left {
+    flex-direction: row;
+}
+
+.app-right {
+    flex-direction: row-reverse;
+}
+
+.app-top {
+    flex-direction: column;
+}
+
+.app-bottom {
+    flex-direction: column-reverse;
+}
 
 .navigation-horizontal {
     height: var(--navigation-height);
@@ -75,6 +105,7 @@ th {
 
 .navigation-vertical {
     width: var(--navigation-width);
+    height: 100%;
     flex-shrink: 0;
     overflow-y: auto;
     display: flex;
@@ -213,9 +244,10 @@ th {
 
 
 .menu-icon-group {
-    font-size: 1.71428571em !important;
-    margin: 0 auto .5rem !important;
-    text-shadow: unset !important;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
 }
 
 .menu-icon-no-shadow {

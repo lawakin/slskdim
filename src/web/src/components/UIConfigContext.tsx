@@ -37,21 +37,40 @@ export const UIConfigProvider = ({
 
   useEffect(() => {
     const element = document.documentElement;
+    element.style.setProperty('--slskdim-text-color', storedConfig.text_color);
     element.style.setProperty(
-      '--background-color',
+      '--slskdim-primary-background',
       storedConfig.background_color,
     );
     element.style.setProperty(
-      '--slskd-primary-background',
-      storedConfig.background_color,
-    );
-    element.style.setProperty(
-      '--slskd-secondary-background',
+      '--slskdim-secondary-background',
       storedConfig.secondary_background_color,
     );
     element.style.setProperty(
-      '--slskd-primary-color',
+      '--slskdim-muted-background',
+      storedConfig.muted_background_color,
+    );
+    element.style.setProperty(
+      '--slskdim-secondary-background',
+      storedConfig.secondary_background_color,
+    );
+    element.style.setProperty(
+      '--slskdim-primary-color',
       storedConfig.primary_color,
+    );
+    element.style.setProperty(
+      '--slskdim-primary-foreground',
+      storedConfig.primary_foreground_color,
+    );
+    element.style.setProperty(
+      '--slskdim-muted-foreground',
+      storedConfig.muted_foreground_color,
+    );
+    element.style.setProperty('--slskdim-border', storedConfig.border_color);
+    element.style.setProperty('--slskdim-ring', storedConfig.ring_color);
+    element.style.setProperty(
+      '--slskdim-destructive',
+      storedConfig.destructive_color,
     );
   }, [storedConfig]);
 

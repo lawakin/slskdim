@@ -35,13 +35,19 @@ const CancelButton = ({ cancel, working }) => (
   </ShrinkableButton>
 );
 
-const Shares = ({ state }: { readonly state: ShareState }) => {
+const Shares = ({ state }: { readonly state?: ShareState }) => {
   const [loading, setLoading] = useState(true);
   const [working, setWorking] = useState(false);
   const [shares, setShares] = useState([]);
   const [modal, setModal] = useState<Share | undefined>();
 
-  const { directories, files, scanPending, scanProgress, scanning } = state;
+  const {
+    directories = 0,
+    files = 0,
+    scanPending = false,
+    scanProgress = 0,
+    scanning = false,
+  } = state ?? {};
 
   const getAll = async (quiet = false) => {
     try {
