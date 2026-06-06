@@ -3,8 +3,16 @@ import {
   UI_CONFIG_SCHEMA,
   type UIConfig,
 } from '../../../lib/uiConfig';
+import { Checkbox } from '../../ui/checkbox';
+import { Input } from '../../ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../ui/select';
 import { useUIConfig } from '../../UIConfigContext';
-import { Checkbox, Form, Input, Select } from 'semantic-ui-react';
 
 type ConfigFieldProps = {
   readonly field: FieldSchema;
@@ -12,73 +20,78 @@ type ConfigFieldProps = {
   readonly value: UIConfig[keyof UIConfig];
 };
 
-const ConfigField = ({
-  field,
-  onChange,
-  value,
-  // eslint-disable-next-line consistent-return
-}: ConfigFieldProps): React.JSX.Element => {
+// eslint-disable-next-line consistent-return
+const ConfigField = ({ field, onChange, value }: ConfigFieldProps) => {
   switch (field.type) {
     case 'select':
       return (
-        <Form.Field>
-          <label style={{ color: 'white' }}>{field.label}</label>
+        <div className="flex flex-col gap-1">
+          <label>{field.label}</label>
           <Select
-            onChange={(_event, { value: v }) =>
-              onChange(v as UIConfig[keyof UIConfig])
-            }
-            options={field.options.map((o) => ({ key: o, text: o, value: o }))}
-            style={{ color: 'white' }}
+            onValueChange={(v) => onChange(v as UIConfig[keyof UIConfig])}
             value={value as string}
-          />
-        </Form.Field>
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {field.options.map((o) => (
+                <SelectItem
+                  key={o}
+                  value={o}
+                >
+                  {o}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       );
     case 'toggle':
       return (
-        <Form.Field>
+        <div className="flex items-center gap-2">
           <Checkbox
             checked={value as unknown as boolean}
-            label={field.label}
-            onChange={(_event, { checked }) =>
+            id={field.label}
+            onCheckedChange={(checked) =>
               onChange(checked as unknown as UIConfig[keyof UIConfig])
             }
-            style={{ color: 'white' }}
-            toggle
           />
-        </Form.Field>
+          <label htmlFor={field.label}>{field.label}</label>
+        </div>
       );
     case 'color':
       return (
-        <Form.Field>
-          <label style={{ color: 'white' }}>{field.label}</label>
+        <div className="flex flex-col gap-1">
+          <label>{field.label}</label>
           <input
             onChange={(event) =>
-              onChange(
-                event.target.value as unknown as UIConfig[keyof UIConfig],
-              )
+              onChange(event.target.value as UIConfig[keyof UIConfig])
             }
-            style={{ color: 'white' }}
             type="color"
             value={value as string}
           />
-        </Form.Field>
+        </div>
       );
     case 'number':
       return (
-        <Form.Field>
-          <label style={{ color: 'white' }}>{field.label}</label>
+        <div className="flex flex-col gap-1">
+          <label>{field.label}</label>
           <Input
             max={field.max}
             min={field.min}
-            onChange={(_event, { value: v }) =>
-              onChange(Number(v) as unknown as UIConfig[keyof UIConfig])
+            onChange={(event) =>
+              onChange(
+                Number(
+                  event.target.value,
+                ) as unknown as UIConfig[keyof UIConfig],
+              )
             }
             step={field.step}
-            style={{ color: 'white' }}
             type="number"
             value={value as unknown as number}
           />
-        </Form.Field>
+        </div>
       );
   }
 };
@@ -87,7 +100,7 @@ const Appearance = () => {
   const [config, setConfig] = useUIConfig();
 
   return (
-    <Form>
+    <div className="flex flex-col gap-4">
       {(
         Object.entries(UI_CONFIG_SCHEMA) as Array<[keyof UIConfig, FieldSchema]>
       ).map(([key, field]) => (
@@ -98,7 +111,7 @@ const Appearance = () => {
           value={config[key]}
         />
       ))}
-    </Form>
+    </div>
   );
 };
 

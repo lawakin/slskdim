@@ -1,14 +1,14 @@
-import 'semantic-ui-less/semantic.less';
+import './index.css';
 import App from './components/App';
 import { UIConfigProvider } from './components/UIConfigContext';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-render(
+const root = createRoot(document.querySelector('#root'));
+root.render(
   <Router>
     <UIConfigProvider>
       <App />
     </UIConfigProvider>
   </Router>,
-  document.querySelector('#root'),
 );

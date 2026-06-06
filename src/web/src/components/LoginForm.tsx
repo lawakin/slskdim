@@ -1,16 +1,10 @@
 import Logos from './Shared/Logo';
+import { Alert } from './ui/alert';
+import { Button } from './ui/button';
+import { Checkbox } from './ui/checkbox';
+import { Input } from './ui/input';
+import { Lock, LogIn, User, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Button,
-  Checkbox,
-  Form,
-  Grid,
-  Header,
-  Icon,
-  Input,
-  Message,
-  Segment,
-} from 'semantic-ui-react';
 
 const initialState = {
   password: '',
@@ -31,7 +25,7 @@ const LoginForm = ({
     rememberMe: boolean,
   ) => void;
 }) => {
-  const usernameInput = useRef<Input>(null);
+  const usernameInput = useRef<HTMLInputElement>(null);
   const [state, setState] = useState(initialState);
   const [ready, setReady] = useState(false);
   const logo = useMemo(
@@ -61,77 +55,66 @@ const LoginForm = ({
   const { password, rememberMe, username } = state;
 
   return (
-    <Grid
-      style={{ height: '100vh' }}
-      textAlign="center"
-      verticalAlign="middle"
-    >
-      <Grid.Column style={{ maxWidth: 372 }}>
-        <Header
-          as="h2"
-          style={{
-            fontFamily: 'monospace',
-            fontSize: 'inherit',
-            letterSpacing: -1,
-            lineHeight: 1.1,
-            whiteSpace: 'pre',
-          }}
-          textAlign="center"
-        >
+    <div className="columns-3 text-center align-middle">
+      <div style={{ maxWidth: 372 }}>
+        <h2 className="font-mono text-inherit tracking-[-1px] leading-[1.1] whitespace-pre text-center">
           {logo}
-        </Header>
-        <Form size="large">
-          <Segment raised>
-            <Input
-              disabled={loading}
-              fluid
-              icon="user"
-              iconPosition="left"
-              onChange={(event) => handleChange('username', event.target.value)}
-              placeholder="Username"
-              ref={usernameInput}
-            />
-            <Form.Input
-              disabled={loading}
-              fluid
-              icon="lock"
-              iconPosition="left"
-              onChange={(event) => handleChange('password', event.target.value)}
-              placeholder="Password"
-              type="password"
-            />
-            <Checkbox
-              checked={rememberMe}
-              disabled={loading}
-              label="Remember Me"
-              onChange={() => handleChange('rememberMe', !rememberMe)}
-            />
-          </Segment>
+        </h2>
+        <form className="text-lg">
+          <div className="segment-raised">
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                className="pl-9"
+                disabled={loading}
+                onChange={(event) =>
+                  handleChange('username', event.target.value)
+                }
+                placeholder="Username"
+                ref={usernameInput}
+              />
+            </div>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                className="pl-9"
+                disabled={loading}
+                onChange={(event) =>
+                  handleChange('password', event.target.value)
+                }
+                placeholder="Password"
+                type="password"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Checkbox
+                checked={rememberMe}
+                disabled={loading}
+                id="rememberMe"
+                onCheckedChange={(checked) =>
+                  handleChange('rememberMe', Boolean(checked))
+                }
+              />
+              <label htmlFor="rememberMe">Remember Me</label>
+            </div>
+          </div>
           <Button
-            className="login-button"
+            className="login-button text-lg"
             disabled={!ready || loading}
-            fluid
-            loading={loading}
             onClick={() => onLoginAttempt(username, password, rememberMe)}
-            primary
-            size="large"
           >
-            <Icon name="sign in" />
+            <LogIn className="h-4 w-4" />
             Login
           </Button>
           {error && (
-            <Message
-              className="login-failure"
-              floating
-              negative
-            >
-              <Icon name="x" />
+            <Alert className="login-failure">
+              <X className="h-4 w-4" />
               {error instanceof Error ? error.message : String(error)}
-            </Message>
+            </Alert>
           )}
-        </Form>
-      </Grid.Column>
-    </Grid>
+        </form>
+      </div>
+    </div>
   );
 };
 

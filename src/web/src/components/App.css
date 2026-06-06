@@ -10,10 +10,20 @@
     --modal-min-height: 500px;
     --slskd-browse-folderlist-header-color: black;
     --slskd-browse-folderlist-header-selected-color: #0E6EB8;
+
+    --slskdim-background1-color: #111;
+    --slskdim-background2-color: #222;
+    --slskdim-background3-color: #333;
+
+    --slskdim-primary-color: #00a;
+    --slskdim-secondary-color: #078;
+    --slskdim-error-color: #b00;
+    --slskdim-success-color: #0b0;
 }
 
 body {
     background-color: var(--background-color);
+    background-color: #fff;
 }
 
 .ui.table td,

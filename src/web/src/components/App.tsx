@@ -7,6 +7,7 @@ import { connect, disconnect } from '../lib/server';
 import * as session from '../lib/session';
 import { isPassthroughEnabled } from '../lib/token';
 import {
+  type ApplicationOptions,
   type ApplicationState,
   type ConnectionWatchdogState,
   type RelayControllerState,
@@ -24,24 +25,43 @@ import System from './System/System';
 import Transfers from './Transfers/Transfers';
 import UIConfigContext from './UIConfigContext';
 import Users from './Users/Users';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Bot,
+  CircleAlert,
+  Clock,
+  Download,
+  FlaskConical,
+  FolderOpen,
+  Loader2,
+  LogOut,
+  type LucideIcon,
+  Megaphone,
+  MessageCircle,
+  MessagesSquare,
+  Plug,
+  Search,
+  Settings,
+  Star,
+  Upload,
+  Users as UsersIcon,
+  X,
+} from 'lucide-react';
 import { Component } from 'react';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import {
-  Button,
-  Header,
-  Icon,
-  Loader,
-  Menu,
-  Modal,
-  Segment,
-  type SemanticCOLORS,
-  type SemanticICONS,
-  Sidebar,
-} from 'semantic-ui-react';
 
 const initialState = {
-  applicationOptions: {} as Record<string, unknown>,
+  applicationOptions: {} as ApplicationOptions,
   applicationState: {} as ApplicationState,
   error: false,
   initialized: false,
@@ -75,102 +95,80 @@ const ModeSpecificConnectButton = ({
       controller?.state ?? '',
     );
 
+    const plugColor =
+      controller?.state === 'Connected'
+        ? 'text-green-500'
+        : isTransitioning
+          ? 'text-yellow-500'
+          : 'text-gray-400';
+
     return (
-      <Menu.Item
+      <div
+        className="menu-item"
         onClick={() =>
           isConnected ? relayAPI.disconnect() : relayAPI.connect()
         }
       >
-        <Icon.Group className="menu-icon-group">
-          <Icon
-            color={
-              controller?.state === 'Connected'
-                ? 'green'
-                : isTransitioning
-                  ? 'yellow'
-                  : 'grey'
-            }
-            name="plug"
-          />
+        <div className="menu-icon-group relative">
+          <Plug className={`h-4 w-4 ${plugColor}`} />
           {!isConnected && (
-            <Icon
-              className="menu-icon-no-shadow"
-              color="red"
-              corner="bottom right"
-              name="close"
-            />
+            <X className="menu-icon-no-shadow absolute -bottom-1 -right-1 h-2 w-2 text-red-500" />
           )}
-        </Icon.Group>
+        </div>
         Controller {controller?.state}
-      </Menu.Item>
-    );
-  } else {
-    if (server?.isConnected) {
-      return (
-        <Menu.Item onClick={() => disconnect()}>
-          <Icon.Group className="menu-icon-group">
-            <Icon
-              color={pendingReconnect ? 'yellow' : 'green'}
-              name="plug"
-            />
-            {user?.privileges?.isPrivileged && (
-              <Icon
-                className="menu-icon-no-shadow"
-                color="yellow"
-                corner
-                name="star"
-              />
-            )}
-          </Icon.Group>
-          {isHorizontal && 'Connected'}
-        </Menu.Item>
-      );
-    }
-
-    // the server is disconnected, and we need to give the user some information about what the client is doing
-    // options are:
-    // - nothing. the client was manually disconnected, kicked off by another login, etc., and we're not trying to connect
-    // - actively trying to make a connection to the server
-    // - still trying to connect, but waiting for the next connection attempt
-    let icon: SemanticICONS = 'close';
-    let color: SemanticCOLORS = 'red';
-    let label = 'Disconnected';
-
-    if (connectionWatchdog?.isAttemptingConnection) {
-      icon = 'clock';
-      color = 'yellow';
-      label = 'Waiting...';
-    }
-
-    // eslint-disable-next-line no-warning-comments
-    // TODO: figure out why the original code had this?
-    // likely just deadcode but
-    // if (server?.isConnecting || server?.IsLoggingIn) {
-    if (server?.isConnecting) {
-      // i do not know why typescript refuses to see this
-      icon = 'sync alternate loading' as SemanticICONS;
-      color = 'green';
-      label = 'Connecting...';
-    }
-
-    return (
-      <Menu.Item onClick={() => connect()}>
-        <Icon.Group className="menu-icon-group">
-          <Icon
-            color="grey"
-            name="plug"
-          />
-          <Icon
-            className="menu-icon-no-shadow"
-            color={color}
-            corner="bottom right"
-            name={icon}
-          />
-        </Icon.Group>
-        {isHorizontal && label}
-      </Menu.Item>
+      </div>
     );
   }
+
+  if (server?.isConnected) {
+    return (
+      <div
+        className="menu-item"
+        onClick={() => disconnect()}
+      >
+        <div className="menu-icon-group relative">
+          <Plug
+            className={`h-4 w-4 ${pendingReconnect ? 'text-yellow-500' : 'text-green-500'}`}
+          />
+          {user?.privileges?.isPrivileged && (
+            <Star className="menu-icon-no-shadow absolute -bottom-1 -right-1 h-2 w-2 text-yellow-400" />
+          )}
+        </div>
+        {isHorizontal && 'Connected'}
+      </div>
+    );
+  }
+
+  let IconComponent: LucideIcon = X;
+  let iconColorClass = 'text-red-500';
+  let label = 'Disconnected';
+
+  if (connectionWatchdog?.isAttemptingConnection) {
+    IconComponent = Clock;
+    iconColorClass = 'text-yellow-500';
+    label = 'Waiting...';
+  }
+
+  if (server?.isConnecting) {
+    IconComponent = Loader2;
+    iconColorClass = 'text-green-500 animate-spin';
+    label = 'Connecting...';
+  }
+
+  return (
+    <div
+      className="menu-item"
+      onClick={() => connect()}
+    >
+      <div className="menu-icon-group relative">
+        <Plug className="h-4 w-4 text-gray-400" />
+        <IconComponent
+          className={`menu-icon-no-shadow absolute -bottom-1 -right-1 h-2 w-2 ${iconColorClass}`}
+        />
+      </div>
+      {isHorizontal && label}
+    </div>
+  );
 };
 
 class App extends Component<Record<string, never>, typeof initialState> {
@@ -185,6 +183,9 @@ class App extends Component<Record<string, never>, typeof initialState> {
   }
 
   public static contextType = UIConfigContext;
+
+  // eslint-disable-next-line react/static-property-placement
+  public declare context: React.ContextType<typeof UIConfigContext>;
 
   public init = async () => {
     this.setState({ initialized: false }, async () => {
@@ -298,10 +299,9 @@ class App extends Component<Record<string, never>, typeof initialState> {
 
     if (!initialized) {
       return (
-        <Loader
-          active
-          size="big"
-        />
+        <div className="flex h-screen items-center justify-center">
+          <Loader2 className="h-12 w-12 animate-spin" />
+        </div>
       );
     }
 
@@ -327,7 +327,6 @@ class App extends Component<Record<string, never>, typeof initialState> {
       return (
         <LoginForm
           error={login.error}
-          // initialized={login.initialized}
           loading={login.pending}
           onLoginAttempt={this.handleLogin}
         />
@@ -338,80 +337,66 @@ class App extends Component<Record<string, never>, typeof initialState> {
 
     return (
       <>
-        <Sidebar.Pushable
-          as={Segment}
-          className="app"
-        >
-          <Sidebar
-            animation="overlay"
-            as={Menu}
+        <div className="app">
+          <nav
             className={
               isHorizontal ? 'navigation-horizontal' : 'navigation-vertical'
             }
-            direction={barPosition}
-            height="thin"
-            icon="labeled"
-            inverted
-            vertical={!isHorizontal}
-            visible
           >
             {version.isCanary && (
-              <Menu.Item>
-                <Icon
-                  color="yellow"
-                  name="flask"
-                />
+              <div className="menu-item">
+                <FlaskConical className="h-4 w-4 text-yellow-500" />
                 Canary
-              </Menu.Item>
+              </div>
             )}
             {isAgent ? (
-              <Menu.Item>
-                <Icon name="detective" />
+              <div className="menu-item">
+                <Bot className="h-4 w-4" />
                 Agent Mode
-              </Menu.Item>
+              </div>
             ) : (
               <>
                 <Link to={`${urlBase}/searches`}>
-                  <Menu.Item>
-                    <Icon name="search" />
+                  <div className="menu-item">
+                    <Search className="h-4 w-4" />
                     Search
-                  </Menu.Item>
+                  </div>
                 </Link>
                 <Link to={`${urlBase}/downloads`}>
-                  <Menu.Item>
-                    <Icon name="download" />
+                  <div className="menu-item">
+                    <Download className="h-4 w-4" />
                     Downloads
-                  </Menu.Item>
+                  </div>
                 </Link>
                 <Link to={`${urlBase}/uploads`}>
-                  <Menu.Item>
-                    <Icon name="upload" />
+                  <div className="menu-item">
+                    <Upload className="h-4 w-4" />
                     Uploads
-                  </Menu.Item>
+                  </div>
                 </Link>
                 <Link to={`${urlBase}/rooms`}>
-                  <Menu.Item>
-                    <Icon name="comments" />
+                  <div className="menu-item">
+                    <MessagesSquare className="h-4 w-4" />
                     Rooms
-                  </Menu.Item>
+                  </div>
                 </Link>
                 <Link to={`${urlBase}/chat`}>
-                  <Menu.Item>
-                    <Icon name="comment" />
+                  <div className="menu-item">
+                    <MessageCircle className="h-4 w-4" />
                     Chat
-                  </Menu.Item>
+                  </div>
                 </Link>
                 <Link to={`${urlBase}/users`}>
-                  <Menu.Item>
-                    <Icon name="users" />
+                  <div className="menu-item">
+                    <UsersIcon className="h-4 w-4" />
                     Users
-                  </Menu.Item>
+                  </div>
                 </Link>
                 <Link to={`${urlBase}/browse`}>
-                  <Menu.Item>
-                    <Icon name="folder open" />
+                  <div className="menu-item">
+                    <FolderOpen className="h-4 w-4" />
                     Browse
-                  </Menu.Item>
+                  </div>
                 </Link>
               </>
             )}
@@ -426,91 +411,75 @@ class App extends Component<Record<string, never>, typeof initialState> {
               user={user}
             />
             {(pendingReconnect || pendingRestart || pendingShareRescan) && (
-              <Menu.Item>
-                <Icon.Group className="menu-icon-group">
+              <div className="menu-item">
+                <div className="menu-icon-group relative">
                   <Link to={`${urlBase}/system/info`}>
-                    <Icon
-                      color="yellow"
-                      name="exclamation circle"
-                    />
+                    <CircleAlert className="h-4 w-4 text-yellow-500" />
                   </Link>
-                </Icon.Group>
+                </div>
                 Pending Action
-              </Menu.Item>
+              </div>
             )}
             {isUpdateAvailable && (
-              <Modal
-                centered
-                closeIcon
-                size="mini"
-                trigger={
-                  <Menu.Item>
-                    <Icon.Group className="menu-icon-group">
-                      <Icon
-                        color="yellow"
-                        name="bullhorn"
-                      />
-                    </Icon.Group>
-                    New Version!
-                  </Menu.Item>
-                }
-              >
-                <Modal.Header>New Version!</Modal.Header>
-                <Modal.Content>
+              <Dialog>
+                <DialogTrigger className="menu-item">
+                  <div className="menu-icon-group relative">
+                    <Megaphone className="h-4 w-4 text-yellow-500" />
+                  </div>
+                  New Version!
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>New Version!</DialogTitle>
+                  </DialogHeader>
                   <p>
-                    {/* You are currently running version{' '} */}
-                    <strong>{current}</strong>
-                    while version <strong>{latest}</strong> is available.
+                    <strong>{current}</strong> while version{' '}
+                    <strong>{latest}</strong> is available.
                   </p>
-                </Modal.Content>
-                <Modal.Actions>
-                  <Button
-                    fluid
-                    href="https://github.com/slskd/slskd/releases"
-                    primary
-                    style={{ marginLeft: 0 }}
-                  >
-                    See Release Notes
-                  </Button>
-                </Modal.Actions>
-              </Modal>
+                  <DialogFooter>
+                    <Button className="w-full">
+                      <a href="https://github.com/slskd/slskd/releases">
+                        See Release Notes
+                      </a>
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             )}
             <Link to={`${urlBase}/system`}>
-              <Menu.Item>
-                <Icon name="cogs" />
+              <div className="menu-item">
+                <Settings className="h-4 w-4" />
                 System
-              </Menu.Item>
+              </div>
             </Link>
             {session.isLoggedIn() && (
-              <Modal
-                actions={[
-                  'Cancel',
-                  {
-                    content: 'Log Out',
-                    key: 'done',
-                    negative: true,
-                    onClick: this.logout,
-                  },
-                ]}
-                centered
-                content="Are you sure you want to log out?"
-                header={
-                  <Header
-                    content="Confirm Log Out"
-                    icon="sign-out"
-                  />
-                }
-                size="mini"
-                trigger={
-                  <Menu.Item>
-                    <Icon name="sign-out" />
-                    Log Out
-                  </Menu.Item>
-                }
-              />
+              <Dialog>
+                <DialogTrigger className="menu-item">
+                  <LogOut className="h-4 w-4" />
+                  Log Out
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Confirm Log Out</DialogTitle>
+                  </DialogHeader>
+                  <p>Are you sure you want to log out?</p>
+                  <DialogFooter>
+                    <DialogClose render={<Button variant="outline" />}>
+                      Cancel
+                    </DialogClose>
+                    <Button
+                      // eslint-disable-next-line react/jsx-handler-names
+                      onClick={this.logout}
+                      variant="destructive"
+                    >
+                      Log Out
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             )}
-          </Sidebar>
-          <Sidebar.Pusher className={`app-content app-content-${barPosition}`}>
+          </nav>
+          <div className={`app-content app-content-${barPosition}`}>
             <AppContext.Provider
               // eslint-disable-next-line no-warning-comments
               // TODO: needs useMemo, but class component. yolo for now.
@@ -543,7 +512,7 @@ class App extends Component<Record<string, never>, typeof initialState> {
                     render={() =>
                       this.withTokenCheck(
                         <div className="view">
-                          <Searches />
+                          <Searches server={server} />
                         </div>,
                       )
                     }
@@ -610,8 +579,8 @@ class App extends Component<Record<string, never>, typeof initialState> {
                 </Switch>
               )}
             </AppContext.Provider>
-          </Sidebar.Pusher>
-        </Sidebar.Pushable>
+          </div>
+        </div>
         <ToastContainer
           autoClose={5_000}
           closeOnClick
