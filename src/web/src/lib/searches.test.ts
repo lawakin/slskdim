@@ -1,4 +1,11 @@
 import * as search from './searches';
+import type { SearchFilters, SearchResponse } from './searches';
+
+const f = (filters: Partial<SearchFilters>, response: unknown) =>
+  search.filterResponse({
+    filters: filters as SearchFilters,
+    response: response as SearchResponse,
+  });
 
 describe('filterResponse', () => {
   it('removes VBR files if "iscbr" is specified', () => {
@@ -9,9 +16,7 @@ describe('filterResponse', () => {
       ],
     };
 
-    const filters = { isCBR: true };
-
-    expect(search.filterResponse({ filters, response })).toMatchObject({
+    expect(f({ isCBR: true }, response)).toMatchObject({
       files: [{ bitRate: 320, isVariableBitRate: false }],
     });
   });
@@ -24,9 +29,7 @@ describe('filterResponse', () => {
       ],
     };
 
-    const filters = { isVBR: true };
-
-    expect(search.filterResponse({ filters, response })).toMatchObject({
+    expect(f({ isVBR: true }, response)).toMatchObject({
       files: [{ bitRate: 123, isVariableBitRate: true }],
     });
   });
@@ -36,9 +39,7 @@ describe('filterResponse', () => {
       files: [{ isVariableBitrate: true }, { isVariableBitrate: false }],
     };
 
-    const filters = { isCBR: true, isVBR: true };
-
-    expect(search.filterResponse({ filters, response })).toMatchObject({
+    expect(f({ isCBR: true, isVBR: true }, response)).toMatchObject({
       files: [],
     });
   });
@@ -51,9 +52,7 @@ describe('filterResponse', () => {
       ],
     };
 
-    const filters = { isLossless: true };
-
-    expect(search.filterResponse({ filters, response })).toMatchObject({
+    expect(f({ isLossless: true }, response)).toMatchObject({
       files: [{ bitDepth: 16, sampleRate: 41_000 }],
     });
   });
@@ -66,9 +65,7 @@ describe('filterResponse', () => {
       ],
     };
 
-    const filters = { isLossy: true };
-
-    expect(search.filterResponse({ filters, response })).toMatchObject({
+    expect(f({ isLossy: true }, response)).toMatchObject({
       files: [{ bitRate: 320, isVariableBitRate: false }],
     });
   });
@@ -78,9 +75,7 @@ describe('filterResponse', () => {
       files: [{ bitRate: 100 }, { bitRate: 99 }],
     };
 
-    const filters = { minBitRate: 100 };
-
-    expect(search.filterResponse({ filters, response })).toMatchObject({
+    expect(f({ minBitRate: 100 }, response)).toMatchObject({
       files: [{ bitRate: 100 }],
     });
   });
@@ -90,9 +85,7 @@ describe('filterResponse', () => {
       files: [{ size: 100 }, { size: 99 }],
     };
 
-    const filters = { minFileSize: 100 };
-
-    expect(search.filterResponse({ filters, response })).toMatchObject({
+    expect(f({ minFileSize: 100 }, response)).toMatchObject({
       files: [{ size: 100 }],
     });
   });
@@ -102,9 +95,7 @@ describe('filterResponse', () => {
       files: [{ length: 100 }, { length: 99 }],
     };
 
-    const filters = { minLength: 100 };
-
-    expect(search.filterResponse({ filters, response })).toMatchObject({
+    expect(f({ minLength: 100 }, response)).toMatchObject({
       files: [{ length: 100 }],
     });
   });
@@ -122,17 +113,13 @@ describe('filterResponse', () => {
     };
 
     it('removes files with filenames not containing included phrases', () => {
-      const filters = { include: ['path', 'to', '.nfo'] };
-
-      expect(search.filterResponse({ filters, response })).toMatchObject({
+      expect(f({ include: ['path', 'to', '.nfo'] }, response)).toMatchObject({
         files: [{ filename: '/path/to/info.nfo' }],
       });
     });
 
     it('removes files with filenames containing excluded phrases', () => {
-      const filters = { exclude: ['bar', 'jpg', 'qux'] };
-
-      expect(search.filterResponse({ filters, response })).toMatchObject({
+      expect(f({ exclude: ['bar', 'jpg', 'qux'] }, response)).toMatchObject({
         files: [
           { filename: '/path/to/foo.mp3' },
           { filename: '/path/to/baz.mp3' },
@@ -142,12 +129,9 @@ describe('filterResponse', () => {
     });
 
     it('removes a mix of includes and excludes', () => {
-      const filters = {
-        exclude: ['foo', 'bar'],
-        include: ['path', '.mp3'],
-      };
-
-      expect(search.filterResponse({ filters, response })).toMatchObject({
+      expect(
+        f({ exclude: ['foo', 'bar'], include: ['path', '.mp3'] }, response),
+      ).toMatchObject({
         files: [
           { filename: '/path/to/baz.mp3' },
           { filename: '/path/to/qux.mp3' },

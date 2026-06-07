@@ -148,13 +148,15 @@ const Transfers = ({ direction, server }) => {
           icon={direction}
         />
       ) : (
-        transfers.map((user) => (
-          <TransferGroup
-            direction={direction}
-            key={user.username}
-            user={user}
-          />
-        ))
+        <div className="flex flex-col gap-2">
+          {transfers.map((user) => (
+            <TransferGroup
+              direction={direction}
+              key={user.username}
+              user={user}
+            />
+          ))}
+        </div>
       )}
     </>
   );

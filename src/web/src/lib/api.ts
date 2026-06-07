@@ -21,19 +21,17 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
     if (
-      error.response.status === 401 &&
+      error.response?.status === 401 &&
       !['/session', '/server', '/application'].includes(
-        error.response.config.url,
+        error.response?.config?.url,
       )
     ) {
       console.debug('received 401 from api route, logging out');
       clearToken();
-      window.location.reload(true);
+      window.location.reload();
 
       return Promise.reject(error);
     } else {

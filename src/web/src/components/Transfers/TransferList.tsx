@@ -1,4 +1,9 @@
-import { formatBytes, formatBytesAsUnit, getFileName } from '../../lib/util';
+import {
+  type ByteUnit,
+  formatBytes,
+  formatBytesAsUnit,
+  getFileName,
+} from '../../lib/util';
 import { type TransferFile } from '../../types';
 import { Button } from '../ui/button';
 import { Checkbox } from '../ui/checkbox';
@@ -55,7 +60,7 @@ const isQueuedState = (state: string) => state.includes('Queued');
 
 const formatBytesTransferred = ({ size, transferred }) => {
   const [s, sExtension] = formatBytes(size, 1).split(' ');
-  const t = formatBytesAsUnit(transferred, sExtension, 1);
+  const t = formatBytesAsUnit(transferred, sExtension as ByteUnit, 1);
 
   return `${t}/${s} ${sExtension}`;
 };
@@ -91,10 +96,7 @@ const TransferList = ({
 
   return (
     <div>
-      <h3
-        className="filelist-header"
-        // size="small"
-      >
+      <h3 className="flex">
         <button
           className="cursor-pointer"
           onClick={() => setIsFolded(!isFolded)}
@@ -106,7 +108,7 @@ const TransferList = ({
             <FolderOpen className="h-4 w-4" />
           )}
         </button>
-        {directoryName}
+        <span>{directoryName}</span>
       </h3>
       {!isFolded && (
         <div>

@@ -1,4 +1,15 @@
-export const formatSeconds = (seconds) => {
+export type ByteUnit =
+  | 'B'
+  | 'EB'
+  | 'GB'
+  | 'KB'
+  | 'MB'
+  | 'PB'
+  | 'TB'
+  | 'YB'
+  | 'ZB';
+
+export const formatSeconds = (seconds: number | undefined): string => {
   if (seconds === undefined) return '';
   const date = new Date(1_970, 0, 1);
   date.setSeconds(seconds);
@@ -9,22 +20,47 @@ export const formatSeconds = (seconds) => {
   return date.toTimeString().replace(/.*(\d{2}:\d{2}).*/u, '$1');
 };
 
-export const formatBytesAsUnit = (bytes, unit, decimals = 2) => {
+export const formatBytesAsUnit = (
+  bytes: number,
+  unit: ByteUnit,
+  decimals = 2,
+): number | string => {
   if (unit === 'B') return bytes + ' ' + unit;
 
   const k = 1_024;
   const dm = decimals < 0 ? 0 : decimals;
-  const sizes = { EB: 6, GB: 3, KB: 1, MB: 2, PB: 5, TB: 4, YB: 8, ZB: 7 };
+  const sizes: Record<Exclude<ByteUnit, 'B'>, number> = {
+    EB: 6,
+    GB: 3,
+    KB: 1,
+    MB: 2,
+    PB: 5,
+    TB: 4,
+    YB: 8,
+    ZB: 7,
+  };
 
-  return Number.parseFloat((bytes / k ** sizes[unit]).toFixed(dm));
+  return Number.parseFloat(
+    (bytes / k ** sizes[unit as Exclude<ByteUnit, 'B'>]).toFixed(dm),
+  );
 };
 
-export const formatBytes = (bytes, decimals = 2) => {
+export const formatBytes = (bytes: number, decimals = 2): string => {
   if (bytes === 0) return '0 B';
 
   const k = 1_024;
   const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const sizes: ByteUnit[] = [
+    'B',
+    'KB',
+    'MB',
+    'GB',
+    'TB',
+    'PB',
+    'EB',
+    'ZB',
+    'YB',
+  ];
 
   const index = Math.floor(Math.log(bytes) / Math.log(k));
 
@@ -33,15 +69,13 @@ export const formatBytes = (bytes, decimals = 2) => {
   );
 };
 
-export const formatDate = (date) => {
-  return new Date(date).toLocaleString();
-};
+export const formatDate = (date: string | Date): string =>
+  new Date(date).toLocaleString();
 
-export const getFileName = (fullPath) => {
-  return fullPath.split('\\').pop().split('/').pop();
-};
+export const getFileName = (fullPath: string): string =>
+  fullPath.split('\\').pop().split('/').pop();
 
-export const getDirectoryName = (fullPath) => {
+export const getDirectoryName = (fullPath: string): string => {
   let path = fullPath;
 
   if (path.lastIndexOf('\\') > 0) {
@@ -60,7 +94,12 @@ export const formatAttributes = ({
   isVariableBitRate,
   bitDepth,
   sampleRate,
-}) => {
+}: {
+  bitDepth: number | null;
+  bitRate: number | null;
+  isVariableBitRate: boolean | null;
+  sampleRate: number | null;
+}): string => {
   const isLossless = Boolean(sampleRate) && Boolean(bitDepth);
 
   if (isLossless) {
@@ -74,11 +113,10 @@ export const formatAttributes = ({
   return bitRate ? `${bitRate} Kbps` : '';
 };
 
-export const sleep = (milliseconds) => {
-  return new Promise((resolve) => {
+export const sleep = (milliseconds: number): Promise<void> =>
+  new Promise((resolve) => {
     setTimeout(resolve, milliseconds);
   });
-};
 
 /* https://www.npmjs.com/package/js-file-download
  *
@@ -98,33 +136,25 @@ export const sleep = (milliseconds) => {
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE
  */
-export const downloadFile = (data, filename, mime) => {
+export const downloadFile = (
+  data: BlobPart,
+  filename: string,
+  mime?: string,
+): void => {
   const blob = new Blob([data], { type: mime || 'application/octet-stream' });
-  // eslint-disable-next-line no-negated-condition
-  if (typeof window.navigator.msSaveBlob !== 'undefined') {
-    // IE workaround for "HTML7007: One or more blob URLs were
-    // revoked by closing the blob for which they were created.
-    // These URLs will no longer resolve as the data backing
-    // the URL has been freed."
-    window.navigator.msSaveBlob(blob, filename);
-  } else {
-    const blobURL = window.URL.createObjectURL(blob);
-    const temporaryLink = document.createElement('a');
-    temporaryLink.style.display = 'none';
-    temporaryLink.href = blobURL;
-    temporaryLink.setAttribute('download', filename);
+  const blobURL = window.URL.createObjectURL(blob);
+  const temporaryLink = document.createElement('a');
+  temporaryLink.style.display = 'none';
+  temporaryLink.href = blobURL;
+  temporaryLink.setAttribute('download', filename);
 
-    // Safari thinks _blank anchor are pop ups. We only want to set _blank
-    // target if the browser does not support the HTML5 download attribute.
-    // This allows you to download files in desktop safari if pop up blocking
-    // is enabled.
-    if (typeof temporaryLink.download === 'undefined') {
-      temporaryLink.setAttribute('target', '_blank');
-    }
-
-    document.body.append(temporaryLink);
-    temporaryLink.click();
-    temporaryLink.remove();
-    window.URL.revokeObjectURL(blobURL);
+  // Safari doesn't support the download attribute — fall back to _blank
+  if (typeof temporaryLink.download === 'undefined') {
+    temporaryLink.setAttribute('target', '_blank');
   }
+
+  document.body.append(temporaryLink);
+  temporaryLink.click();
+  temporaryLink.remove();
+  window.URL.revokeObjectURL(blobURL);
 };

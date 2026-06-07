@@ -244,43 +244,40 @@ const Browse = () => {
   }));
 
   return (
-    <div className="search-container">
-      <div className="browse-segment">
-        <div className="browse-segment-icon" />
-        <div className="flex gap-2">
-          <Input
-            className="search-input"
-            data-lpignore="true"
-            disabled={pending}
-            onChange={(event) => setUsername(event.target.value)}
-            onKeyUp={(event) => {
-              if (event.key === 'Enter') void doBrowse(username);
-            }}
-            placeholder="Username"
-            ref={inputRef}
-            type="search"
-            value={username}
-          />
-          {pending ? (
-            <Loader2 className="h-5 w-5 animate-spin self-center" />
-          ) : browseState === 'idle' || browseState === 'error' ? (
-            <Button
-              onClick={() => doBrowse(username)}
-              size="icon"
-              variant="ghost"
-            >
-              <Search className="h-4 w-4" />
-            </Button>
-          ) : (
-            <Button
-              onClick={clear}
-              size="icon"
-              variant="ghost"
-            >
-              <X className="h-4 w-4 text-red-500" />
-            </Button>
-          )}
-        </div>
+    <div className="px-[var(--content-padding-h)] max-w-[var(--content-max-width)] mx-auto last:mb-[var(--card-bottom-margin)]">
+      <div className="mt-[15px] h-[var(--segment-header-height)] flex gap-2">
+        <Input
+          className="search-input"
+          data-lpignore="true"
+          disabled={pending}
+          onChange={(event) => setUsername(event.target.value)}
+          onKeyUp={(event) => {
+            if (event.key === 'Enter') void doBrowse(username);
+          }}
+          placeholder="Username"
+          ref={inputRef}
+          type="search"
+          value={username}
+        />
+        {pending ? (
+          <Loader2 className="h-5 w-5 animate-spin self-center" />
+        ) : browseState === 'idle' || browseState === 'error' ? (
+          <Button
+            onClick={() => doBrowse(username)}
+            size="icon"
+            variant="ghost"
+          >
+            <Search className="h-4 w-4" />
+          </Button>
+        ) : (
+          <Button
+            onClick={clear}
+            size="icon"
+            variant="ghost"
+          >
+            <X className="h-4 w-4 text-red-500" />
+          </Button>
+        )}
       </div>
       {pending ? (
         <div className="search-loader flex items-center justify-center gap-2">
@@ -292,7 +289,7 @@ const Browse = () => {
           {browseError ? (
             <span className="browse-error">Failed to browse {username}</span>
           ) : (
-            <div className="browse-container">
+            <div className="browse-container gap-2 flex flex-col">
               {emptyTree ? (
                 <PlaceholderSegment
                   caption="User is not sharing any files"
@@ -300,23 +297,21 @@ const Browse = () => {
                 />
               ) : (
                 <Card className="browse-tree-card">
+                  <CardHeader className="flex items-center">
+                    <Circle className="h-3 w-3 text-green-500" />
+                    {username}
+                  </CardHeader>
                   <CardContent>
-                    <CardHeader>
-                      <Circle className="h-3 w-3 text-green-500" />
-                      {username}
-                    </CardHeader>
                     <p className="browse-meta">
                       {`${info.files + info.lockedFiles} files in ${info.directories + info.lockedDirectories} directories (including ${info.lockedFiles} files in ${info.lockedDirectories} locked directories)`}
                     </p>
-                    <div className="browse-folderlist">
-                      <DirectoryTree
-                        onSelect={(_, value) =>
-                          setSelectedDirectory({ ...value, children: [] })
-                        }
-                        selectedDirectoryName={selectedDirectory?.name}
-                        tree={tree}
-                      />
-                    </div>
+                    <DirectoryTree
+                      onSelect={(_, value) =>
+                        setSelectedDirectory({ ...value, children: [] })
+                      }
+                      selectedDirectoryName={selectedDirectory?.name}
+                      tree={tree}
+                    />
                   </CardContent>
                 </Card>
               )}

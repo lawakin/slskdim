@@ -121,10 +121,9 @@ const TransferGroup = ({
     <Card
       className="transfer-card"
       key={user.username}
-      // raised
     >
       <CardContent>
-        <CardHeader>
+        <CardHeader className="flex">
           <button
             onClick={() => setIsFolded(!isFolded)}
             type="button"

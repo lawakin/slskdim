@@ -1,16 +1,3 @@
-.transfers-header-segment {
-  margin-top: 15px !important;
-  height: var(--segment-header-height) !important;
-  padding-top: 14px !important;
-  display: flex;
-}
-
-.transfers-segment-icon {
-  padding-top: 5px;
-  padding-right: 1em;
-  margin-top: 6px;
-}
-
 .transfers-header-action-button {
   float: right;
   margin-top: -48px !important;
@@ -52,7 +39,3 @@
   word-wrap: break-word !important;
 }
 
-.transfers-header-buttons {
-  display: inline;
-  margin-left: auto;
-}

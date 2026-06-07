@@ -12,14 +12,32 @@ export type UserDirectory = {
   name: string;
 };
 
+export type UserInfo = {
+  description: string;
+  hasPicture: boolean;
+  picture: string;
+  queueLength: number;
+  uploadSlots: number;
+  username: string;
+};
+
+export type UserStatus = {
+  presence: 'Online' | 'Away' | 'Offline';
+};
+
+export type UserEndpoint = {
+  address: string;
+  port: number;
+};
+
 export const getInfo = ({ username }: { username: string }) =>
-  api.get(`/users/${encodeURIComponent(username)}/info`);
+  api.get<UserInfo>(`/users/${encodeURIComponent(username)}/info`);
 
 export const getStatus = ({ username }: { username: string }) =>
-  api.get(`/users/${encodeURIComponent(username)}/status`);
+  api.get<UserStatus>(`/users/${encodeURIComponent(username)}/status`);
 
 export const getEndpoint = ({ username }: { username: string }) =>
-  api.get(`/users/${encodeURIComponent(username)}/endpoint`);
+  api.get<UserEndpoint>(`/users/${encodeURIComponent(username)}/endpoint`);
 
 export type BrowseResponse = {
   directories: UserDirectory[];
@@ -31,10 +49,10 @@ export const browse = async ({
 }: {
   username: string;
 }): Promise<BrowseResponse> =>
-  (await api.get(`/users/${encodeURIComponent(username)}/browse`)).data;
+  (await api.get<BrowseResponse>(`/users/${encodeURIComponent(username)}/browse`)).data;
 
 export const getBrowseStatus = ({ username }: { username: string }) =>
-  api.get(`/users/${encodeURIComponent(username)}/browse/status`);
+  api.get<number>(`/users/${encodeURIComponent(username)}/browse/status`);
 
 export const getDirectoryContents = async ({
   username,
@@ -44,7 +62,8 @@ export const getDirectoryContents = async ({
   username: string;
 }): Promise<UserDirectory[]> =>
   (
-    await api.post(`/users/${encodeURIComponent(username)}/directory`, {
-      directory,
-    })
+    await api.post<UserDirectory[]>(
+      `/users/${encodeURIComponent(username)}/directory`,
+      { directory },
+    )
   ).data;

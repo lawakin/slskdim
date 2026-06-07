@@ -118,12 +118,12 @@ const TransfersHeader = ({
   const DirectionIcon = direction === 'upload' ? Upload : Download;
 
   return (
-    <div className="transfers-header-segment">
-      <div className="transfers-segment-icon">
+    <div className="mt-[15px] pt-[14px] flex p-2">
+      <div className="">
         <DirectionIcon className="h-8 w-8" />
       </div>
       <Div
-        className="transfers-header-buttons"
+        className="ml-auto flex"
         hidden={empty}
       >
         <ShrinkableDropdownButton

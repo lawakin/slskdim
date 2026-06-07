@@ -3,18 +3,18 @@ import api from './api';
 import { clearToken, getToken, setToken } from './token';
 import { AxiosError } from 'axios';
 
-export const getSecurityEnabled = async () => {
-  return (await api.get('/session/enabled')).data;
+export const getSecurityEnabled = async (): Promise<boolean> => {
+  return (await api.get<boolean>('/session/enabled')).data;
 };
 
-export const enablePassthrough = () => {
+export const enablePassthrough = (): void => {
   console.debug(
     'enabling token passthrough.  api calls will not be authenticated',
   );
   setToken(sessionStorage, tokenPassthroughValue);
 };
 
-export const isLoggedIn = () => {
+export const isLoggedIn = (): boolean => {
   const token = getToken();
   return (
     token !== undefined && token !== null && token !== tokenPassthroughValue
@@ -29,18 +29,18 @@ export const login = async ({
   password: string;
   rememberMe: boolean;
   username: string;
-}) => {
-  const { token } = (await api.post('/session', { password, username })).data;
+}): Promise<string> => {
+  const { token } = (await api.post<{ token: string }>('/session', { password, username })).data;
   setToken(rememberMe ? localStorage : sessionStorage, token);
   return token;
 };
 
-export const logout = () => {
+export const logout = (): void => {
   console.debug('removing token from local and session storage');
   clearToken();
 };
 
-export const check = async () => {
+export const check = async (): Promise<boolean> => {
   try {
     await api.get('/session');
     return true;
