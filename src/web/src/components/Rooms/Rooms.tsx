@@ -216,7 +216,7 @@ const Rooms = () => {
       ) : (
         <Card className="room-active-card">
           <CardContent onClick={() => messageRef.current?.focus()}>
-            <CardHeader>
+            <CardHeader className="flex">
               <Circle className="h-3 w-3 text-green-500" />
               {active}
               <button
@@ -234,7 +234,7 @@ const Rooms = () => {
                 </div>
               ) : (
                 <>
-                  <div>
+                  <div className="w-full">
                     <div
                       className="room-history"
                       ref={listRef}

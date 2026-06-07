@@ -23,7 +23,7 @@ const CodeEditor = ({
       syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
     ]}
     onChange={(newValue) => onChange(newValue)}
-    theme={theme ?? undefined}
+    theme={theme || undefined}
     value={value}
     {...rest}
   />

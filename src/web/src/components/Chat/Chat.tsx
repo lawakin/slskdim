@@ -45,7 +45,7 @@ const ChatMessageHistory = memo(
     <>
       {messages.map((message) => (
         <div
-          className={`chat-message ${message.direction === 'Out' ? 'chat-message-self' : ''}`}
+          className={`chat-message ${message.direction === 'Out' ? 'chat-message-self' : ''} h-fit`}
           key={`${message.timestamp}+${message.message}`}
         >
           <span className="chat-message-time">
@@ -54,7 +54,7 @@ const ChatMessageHistory = memo(
           <span className="chat-message-name">
             {message.direction === 'Out' ? selfUsername : message.username}:
           </span>
-          <span className="chat-message-message">{message.message}</span>
+          <span>{message.message}</span>
         </div>
       ))}
       <div id="chat-history-scroll-anchor" />
@@ -196,8 +196,8 @@ const Chat = ({ state: appState }: { readonly state: ApplicationState }) => {
 
   return (
     <div className="chats">
-      <div className="chat-segment">
-        <div className="chat-segment-icon" />
+      <div className="mt-[15px] flex">
+        <div className="pt-[10px] pr-[0.5em]" />
         <ChatMenu
           active={active}
           conversations={conversations}
@@ -208,24 +208,24 @@ const Chat = ({ state: appState }: { readonly state: ApplicationState }) => {
       {active ? (
         <Card className="chat-active-card">
           <CardContent onClick={() => messageRef.current?.focus()}>
-            <CardHeader>
+            <CardHeader className="flex items-center">
               <Circle className="h-3 w-3 text-green-500" />
               {active}
               <button
-                className="close-button ml-auto"
+                className="ml-auto"
                 onClick={() => deleteConversation(active)}
                 type="button"
               >
                 <X className="h-4 w-4 text-red-500" />
               </button>
             </CardHeader>
-            <div className="chat relative">
+            <div className="chat relative flex">
               {loading ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/70">
                   <Loader2 className="h-8 w-8 animate-spin" />
                 </div>
               ) : (
-                <div>
+                <div className="w-full">
                   <div
                     className="chat-history"
                     ref={listRef}

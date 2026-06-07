@@ -24,24 +24,26 @@ const ChatMenu = ({
   const isActive = (name: string) => active === name;
 
   return (
-    <nav className="conversation-menu">
-      {Object.keys(conversations).map((name) => (
-        <button
-          className={`menu-item ${isActive(name) ? 'menu-active' : ''}`}
-          key={name}
-          onClick={() => onConversationChange(name)}
-          type="button"
-        >
-          <Circle className="h-2 w-2 text-green-500" />
-          {name}
-          {conversations[name].hasUnAcknowledgedMessages && (
-            <span className="unread-badge">
-              {conversations[name].unAcknowledgedMessageCount}
-            </span>
-          )}
-        </button>
-      ))}
-      <div className="ml-auto">
+    <nav className="flex w-full overflow-x-auto">
+      <div className="flex overflow-x-auto">
+        {Object.keys(conversations).map((name) => (
+          <button
+            className={`text-[14pt] ${isActive(name) ? 'font-bold' : ''} flex w-fit pr-2 items-center gap-1`}
+            key={name}
+            onClick={() => onConversationChange(name)}
+            type="button"
+          >
+            <Circle className="h-2 w-2 text-green-500" />
+            {name}
+            {conversations[name].hasUnAcknowledgedMessages && (
+              <span className="unread-badge">
+                {conversations[name].unAcknowledgedMessageCount}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+      <div className="ml-auto shrink-0">
         <SendMessageModal initiateConversation={initiateConversation} />
       </div>
     </nav>

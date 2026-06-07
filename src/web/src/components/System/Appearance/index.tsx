@@ -1,4 +1,5 @@
 import {
+  type ConfigSchema,
   type FieldSchema,
   UI_CONFIG_SCHEMA,
   type UIConfig,
@@ -16,8 +17,8 @@ import { useUIConfig } from '../../UIConfigContext';
 
 type ConfigFieldProps = {
   readonly field: FieldSchema;
-  readonly onChange: (value: UIConfig[keyof UIConfig]) => void;
-  readonly value: UIConfig[keyof UIConfig];
+  readonly onChange: (value: unknown) => void;
+  readonly value: unknown;
 };
 
 // eslint-disable-next-line consistent-return
@@ -28,7 +29,7 @@ const ConfigField = ({ field, onChange, value }: ConfigFieldProps) => {
         <div className="flex flex-col gap-1">
           <label>{field.label}</label>
           <Select
-            onValueChange={(v) => onChange(v as UIConfig[keyof UIConfig])}
+            onValueChange={(v) => onChange(v)}
             value={value as string}
           >
             <SelectTrigger>
@@ -51,11 +52,9 @@ const ConfigField = ({ field, onChange, value }: ConfigFieldProps) => {
       return (
         <div className="flex items-center gap-2">
           <Checkbox
-            checked={value as unknown as boolean}
+            checked={value as boolean}
             id={field.label}
-            onCheckedChange={(checked) =>
-              onChange(checked as unknown as UIConfig[keyof UIConfig])
-            }
+            onCheckedChange={(checked) => onChange(checked)}
           />
           <label htmlFor={field.label}>{field.label}</label>
         </div>
@@ -65,9 +64,7 @@ const ConfigField = ({ field, onChange, value }: ConfigFieldProps) => {
         <div className="flex flex-col gap-1">
           <label>{field.label}</label>
           <input
-            onChange={(event) =>
-              onChange(event.target.value as UIConfig[keyof UIConfig])
-            }
+            onChange={(event) => onChange(event.target.value)}
             type="color"
             value={value as string}
           />
@@ -80,37 +77,73 @@ const ConfigField = ({ field, onChange, value }: ConfigFieldProps) => {
           <Input
             max={field.max}
             min={field.min}
-            onChange={(event) =>
-              onChange(
-                Number(
-                  event.target.value,
-                ) as unknown as UIConfig[keyof UIConfig],
-              )
-            }
+            onChange={(event) => onChange(Number(event.target.value))}
             step={field.step}
             type="number"
-            value={value as unknown as number}
+            value={value as number}
           />
         </div>
       );
   }
 };
 
-const Appearance = () => {
-  const [config, setConfig] = useUIConfig();
+type ConfigGroupProps = {
+  readonly onChange: (key: string, value: unknown) => void;
+  readonly schema: ConfigSchema;
+  readonly values: Record<string, unknown>;
+};
 
-  return (
-    <div className="flex flex-col gap-4">
-      {(
-        Object.entries(UI_CONFIG_SCHEMA) as Array<[keyof UIConfig, FieldSchema]>
-      ).map(([key, field]) => (
+const ConfigGroup = ({ onChange, schema, values }: ConfigGroupProps) => (
+  <>
+    {Object.entries(schema).map(([key, field]) =>
+      field.type === 'group' ? (
+        <div
+          className="flex flex-col gap-2"
+          key={key}
+        >
+          <span className="text-sm font-medium text-muted-foreground">
+            {field.label}
+          </span>
+          <div className="flex flex-col gap-4 pl-4 border-l">
+            <ConfigGroup
+              onChange={(subKey, v) => onChange(`${key}.${subKey}`, v)}
+              schema={field.fields}
+              values={(values[key] as Record<string, unknown>) ?? {}}
+            />
+          </div>
+        </div>
+      ) : (
         <ConfigField
           field={field}
           key={key}
-          onChange={(v) => setConfig({ [key]: v } as Partial<UIConfig>)}
-          value={config[key]}
+          onChange={(v) => onChange(key, v)}
+          value={values[key]}
         />
-      ))}
+      ),
+    )}
+  </>
+);
+
+const Appearance = () => {
+  const [config, setConfig] = useUIConfig();
+
+  const handleChange = (key: string, value: unknown) => {
+    // Dot-notation key like "colors.text_color" → nested partial update
+    const parts = key.split('.');
+    const update = parts.reduceRight<Record<string, unknown>>(
+      (accumulator, part) => ({ [part]: accumulator }),
+      value as Record<string, unknown>,
+    );
+    setConfig(update as Partial<UIConfig>);
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      <ConfigGroup
+        onChange={handleChange}
+        schema={UI_CONFIG_SCHEMA}
+        values={config as unknown as Record<string, unknown>}
+      />
     </div>
   );
 };
