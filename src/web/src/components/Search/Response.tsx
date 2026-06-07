@@ -118,14 +118,14 @@ const Response = ({
 
         const { files, name } = theRootDirectory;
 
-        const fixedFiles: SelectableFile[] = files.map((file) => ({
+        const fixedFiles = files.map((file) => ({
           ...file,
           filename: `${directory}\\${file.filename}`,
           selected:
             oldFiles.find(
               (f) => f.filename === `${directory}\\${file.filename}`,
             )?.selected ?? false,
-        }));
+        })) as SelectableFile[];
 
         setTree({ ...oldTree, [name]: fixedFiles });
       } catch (innerError) {

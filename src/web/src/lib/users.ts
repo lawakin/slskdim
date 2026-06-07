@@ -26,7 +26,11 @@ export type BrowseResponse = {
   lockedDirectories: UserDirectory[];
 };
 
-export const browse = async ({ username }: { username: string }): Promise<BrowseResponse> =>
+export const browse = async ({
+  username,
+}: {
+  username: string;
+}): Promise<BrowseResponse> =>
   (await api.get(`/users/${encodeURIComponent(username)}/browse`)).data;
 
 export const getBrowseStatus = ({ username }: { username: string }) =>
@@ -36,8 +40,8 @@ export const getDirectoryContents = async ({
   username,
   directory,
 }: {
-  username: string;
   directory: string;
+  username: string;
 }): Promise<UserDirectory[]> =>
   (
     await api.post(`/users/${encodeURIComponent(username)}/directory`, {

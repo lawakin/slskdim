@@ -141,6 +141,31 @@ const SearchDetail = ({
   const remainingCount = sortedAndFilteredResults.length - displayCount;
   const loaded = !removing && !creating && !loading;
 
+  const renderShowMore = () => {
+    if (remainingCount > 0)
+      return (
+        <Button
+          className="showmore-button w-full"
+          onClick={() => setDisplayCount(displayCount + 5)}
+          size="lg"
+        >
+          Show {remainingCount > 5 ? 5 : remainingCount} More Results{' '}
+          {`(${remainingCount} remaining, ${filteredCount} hidden by filter(s))`}
+        </Button>
+      );
+    if (filteredCount > 0)
+      return (
+        <Button
+          className="showmore-button w-full"
+          disabled
+          size="lg"
+        >
+          {`All results shown. ${filteredCount} results hidden by filter(s)`}
+        </Button>
+      );
+    return null;
+  };
+
   if (error) {
     return (
       <ErrorSegment caption={(error as Error)?.message ?? String(error)} />
@@ -174,108 +199,100 @@ const SearchDetail = ({
         }
       >
         {loaded && (
-          <div className="search-options">
-            <Select
-              onValueChange={(v) => setResultSort(v as SortKey)}
-              value={resultSort}
-            >
-              <SelectTrigger className="search-options-sort">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {sortOptions.map((o) => (
-                  <SelectItem
-                    key={o.value}
-                    value={o.value}
-                  >
-                    {o.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <div className="search-option-toggles">
-              <label
-                className="search-options-hide-locked flex cursor-pointer items-center gap-2 text-sm"
-                htmlFor="hide-locked"
-              >
-                <Checkbox
-                  checked={hideLocked}
-                  id="hide-locked"
-                  onCheckedChange={() => setHideLocked(!hideLocked)}
-                />
-                Hide Locked Results
-              </label>
-              <label
-                className="search-options-hide-no-slots flex cursor-pointer items-center gap-2 text-sm"
-                htmlFor="hide-no-slots"
-              >
-                <Checkbox
-                  checked={hideNoFreeSlots}
-                  id="hide-no-slots"
-                  onCheckedChange={() => setHideNoFreeSlots(!hideNoFreeSlots)}
-                />
-                Hide Results with No Free Slots
-              </label>
-              <label
-                className="search-options-fold-results flex cursor-pointer items-center gap-2 text-sm"
-                htmlFor="fold-results"
-              >
-                <Checkbox
-                  checked={foldResults}
-                  id="fold-results"
-                  onCheckedChange={() => setFoldResults(!foldResults)}
-                />
-                Fold Results
-              </label>
-            </div>
-            <div className="search-filter relative">
-              <Input
-                className={resultFilters ? 'pr-8' : ''}
-                onChange={(event) => setResultFilters(event.target.value)}
-                placeholder="lackluster -bothersome iscbr isvbr islossless minbitrate:320 minbitdepth:24 minfilesize:10 minfif:8"
-                value={resultFilters}
-              />
-              {resultFilters && (
-                <button
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  onClick={() => setResultFilters('')}
-                  type="button"
+          <>
+            <div className="search-options sticky top-0 z-10 bg-background p-2">
+              <div className="flex">
+                <Select
+                  onValueChange={(v) => setResultSort(v as SortKey)}
+                  value={resultSort}
                 >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              )}
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sortOptions.map((o) => (
+                      <SelectItem
+                        key={o.value}
+                        value={o.value}
+                      >
+                        {o.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <div className="inline-flex">
+                  <label
+                    className="search-options-hide-locked flex cursor-pointer items-center gap-2 text-sm"
+                    htmlFor="hide-locked"
+                  >
+                    <Checkbox
+                      checked={hideLocked}
+                      id="hide-locked"
+                      onCheckedChange={() => setHideLocked(!hideLocked)}
+                    />
+                    Hide Locked Results
+                  </label>
+                  <label
+                    className="search-options-hide-no-slots flex cursor-pointer items-center gap-2 text-sm"
+                    htmlFor="hide-no-slots"
+                  >
+                    <Checkbox
+                      checked={hideNoFreeSlots}
+                      id="hide-no-slots"
+                      onCheckedChange={() =>
+                        setHideNoFreeSlots(!hideNoFreeSlots)
+                      }
+                    />
+                    Hide Results with No Free Slots
+                  </label>
+                  <label
+                    className="search-options-fold-results flex cursor-pointer items-center gap-2 text-sm"
+                    htmlFor="fold-results"
+                  >
+                    <Checkbox
+                      checked={foldResults}
+                      id="fold-results"
+                      onCheckedChange={() => setFoldResults(!foldResults)}
+                    />
+                    Fold Results
+                  </label>
+                </div>
+              </div>
+              <div className="search-filter relative">
+                <Input
+                  className={resultFilters ? 'pr-8' : ''}
+                  onChange={(event) => setResultFilters(event.target.value)}
+                  placeholder="lackluster -bothersome iscbr isvbr islossless minbitrate:320 minbitdepth:24 minfilesize:10 minfif:8"
+                  value={resultFilters}
+                />
+                {resultFilters && (
+                  <button
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    onClick={() => setResultFilters('')}
+                    type="button"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
+            {/* TODO: make this be virtulized using something like react-virtual */}
+            <div className="flex flex-col gap-2">
+              {sortedAndFilteredResults.slice(0, displayCount).map((r) => (
+                <Response
+                  disabled={disabled}
+                  isInitiallyFolded={foldResults}
+                  key={r.username}
+                  onHide={() =>
+                    setHiddenResults([...hiddenResults, r.username])
+                  }
+                  response={r}
+                />
+              ))}
+              {renderShowMore()}
+            </div>
+          </>
         )}
-        {loaded &&
-          sortedAndFilteredResults.slice(0, displayCount).map((r) => (
-            <Response
-              disabled={disabled}
-              isInitiallyFolded={foldResults}
-              key={r.username}
-              onHide={() => setHiddenResults([...hiddenResults, r.username])}
-              response={r}
-            />
-          ))}
-        {loaded &&
-          (remainingCount > 0 ? (
-            <Button
-              className="showmore-button w-full"
-              onClick={() => setDisplayCount(displayCount + 5)}
-              size="lg"
-            >
-              Show {remainingCount > 5 ? 5 : remainingCount} More Results{' '}
-              {`(${remainingCount} remaining, ${filteredCount} hidden by filter(s))`}
-            </Button>
-          ) : filteredCount > 0 ? (
-            <Button
-              className="showmore-button w-full"
-              disabled
-              size="lg"
-            >
-              {`All results shown. ${filteredCount} results hidden by filter(s)`}
-            </Button>
-          ) : null)}
       </Switch>
     </>
   );
