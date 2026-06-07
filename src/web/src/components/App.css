@@ -1,6 +1,6 @@
 :root {
     --navigation-width: 150px;
-    --navigation-height: 80px;
+    --navigation-height: 60px;
     --content-max-width: 1200px;
     --content-padding-h: 15px;
     --card-bottom-margin: 16px;
@@ -101,6 +101,7 @@ th {
     display: flex;
     flex-direction: row;
     align-items: center;
+    background: var(--slskdim-nav-background);
 }
 
 .navigation-vertical {
@@ -110,6 +111,7 @@ th {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    background: var(--slskdim-nav-background);
 }
 
 .app-content {

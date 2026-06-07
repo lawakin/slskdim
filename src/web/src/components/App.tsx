@@ -174,7 +174,7 @@ const App = () => {
   const [retriesExhausted, setRetriesExhausted] = useState(false);
 
   const [config] = useContext(UIConfigContext);
-  const { barPosition } = config;
+  const { barPosition } = config.sidebar;
   const isHorizontal = barPosition === 'top' || barPosition === 'bottom';
 
   const init = async () => {

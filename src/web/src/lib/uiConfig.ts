@@ -42,12 +42,6 @@ export type ConfigSchema = Record<string, FieldSchema | GroupField>;
 // ---------------------------------------------------------------------------
 
 export const UI_CONFIG_SCHEMA = {
-  barPosition: {
-    type: 'select' as const,
-    label: 'Navigation Position',
-    default: 'left' as const,
-    options: ['left', 'right', 'top', 'bottom'] as const,
-  },
   text_color: {
     type: 'color' as const,
     label: 'Text Color',
@@ -100,11 +94,17 @@ export const UI_CONFIG_SCHEMA = {
   },
   sidebar: {
     type: 'group' as const,
-    label: 'Colors',
+    label: 'Sidebar options',
     fields: {
-      ring_color: {
+      barPosition: {
+        type: 'select' as const,
+        label: 'Navigation Position',
+        default: 'left' as const,
+        options: ['left', 'right', 'top', 'bottom'] as const,
+      },
+      background_color: {
         type: 'color' as const,
-        label: 'Ring Color',
+        label: 'Sidebar Background Color',
         default: '#555555',
       },
     },

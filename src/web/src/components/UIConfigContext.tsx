@@ -72,6 +72,10 @@ export const UIConfigProvider = ({
       '--slskdim-destructive',
       storedConfig.destructive_color,
     );
+    element.style.setProperty(
+      '--slskdim-nav-background',
+      storedConfig.sidebar.background_color,
+    );
   }, [storedConfig]);
 
   return (
