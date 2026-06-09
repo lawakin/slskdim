@@ -5,6 +5,7 @@ import {
   type UIConfig,
 } from '../../../lib/uiConfig';
 import { Checkbox } from '../../ui/checkbox';
+import { ColorPicker } from '../../ui/color-picker';
 import { Input } from '../../ui/input';
 import {
   Select,
@@ -61,13 +62,12 @@ const ConfigField = ({ field, onChange, value }: ConfigFieldProps) => {
       );
     case 'color':
       return (
-        <div className="flex flex-col gap-1">
-          <label>{field.label}</label>
-          <input
-            onChange={(event) => onChange(event.target.value)}
-            type="color"
+        <div className="flex items-center gap-2">
+          <ColorPicker
+            onChange={onChange}
             value={value as string}
           />
+          <label>{field.label}</label>
         </div>
       );
     case 'number':

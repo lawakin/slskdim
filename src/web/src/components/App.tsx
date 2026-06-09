@@ -23,7 +23,6 @@ import Searches from './Search/Searches';
 import ErrorSegment from './Shared/ErrorSegment';
 import System from './System/System';
 import Transfers from './Transfers/Transfers';
-import { Label } from './ui/label';
 import UIConfigContext from './UIConfigContext';
 import Users from './Users/Users';
 import { Button } from '@/components/ui/button';
@@ -64,6 +63,7 @@ import { ToastContainer } from 'react-toastify';
 const ModeSpecificConnectButton = ({
   connectionWatchdog,
   controller = {},
+  iconHolderClass,
   mode,
   pendingReconnect,
   server,
@@ -71,6 +71,7 @@ const ModeSpecificConnectButton = ({
 }: {
   readonly connectionWatchdog: ConnectionWatchdogState;
   readonly controller: RelayControllerState;
+  readonly iconHolderClass: string;
   readonly mode: unknown;
   readonly pendingReconnect: unknown;
   readonly server: ServerState;
@@ -91,7 +92,7 @@ const ModeSpecificConnectButton = ({
 
     return (
       <button
-        className="menu-item"
+        className={`menu-item ${iconHolderClass}`}
         onClick={() =>
           isConnected ? relayAPI.disconnect() : relayAPI.connect()
         }
@@ -111,7 +112,7 @@ const ModeSpecificConnectButton = ({
   if (server?.isConnected) {
     return (
       <button
-        className="menu-item"
+        className={`menu-item ${iconHolderClass}`}
         onClick={() => disconnect()}
         type="button"
       >
@@ -123,7 +124,7 @@ const ModeSpecificConnectButton = ({
             <Star className="menu-icon-no-shadow absolute -bottom-1 -right-1 h-2 w-2 text-yellow-400" />
           )}
         </div>
-        <Label> Connected </Label>
+        Connected
       </button>
     );
   }
@@ -146,7 +147,7 @@ const ModeSpecificConnectButton = ({
 
   return (
     <button
-      className="menu-item"
+      className={`menu-item ${iconHolderClass}`}
       onClick={() => connect()}
       type="button"
     >
@@ -156,7 +157,7 @@ const ModeSpecificConnectButton = ({
           className={`menu-icon-no-shadow absolute -bottom-1 -right-1 h-2 w-2 ${iconColorClass}`}
         />
       </div>
-      <Label> {label} </Label>
+      {label}
     </button>
   );
 };
@@ -174,8 +175,17 @@ const App = () => {
   const [retriesExhausted, setRetriesExhausted] = useState(false);
 
   const [config] = useContext(UIConfigContext);
-  const { barPosition } = config.sidebar;
+  const { barPosition, iconsPosition } = config.sidebar;
   const isHorizontal = barPosition === 'top' || barPosition === 'bottom';
+  const iconHolderClass =
+    'flex ' +
+    (iconsPosition === 'left'
+      ? 'flex-row'
+      : iconsPosition === 'right'
+        ? 'flex-row-reverse'
+        : iconsPosition === 'top'
+          ? 'flex-col'
+          : 'flex-col-reverse');
 
   const init = async () => {
     setInitialized(false);
@@ -311,56 +321,56 @@ const App = () => {
           }
         >
           {version.isCanary && (
-            <div className="menu-item">
+            <div className={`menu-item ${iconHolderClass}`}>
               <FlaskConical className="h-4 w-4 text-yellow-500" />
               Canary
             </div>
           )}
           {isAgent ? (
-            <div className="menu-item">
+            <div className={`menu-item ${iconHolderClass}`}>
               <Bot className="h-4 w-4" />
               Agent Mode
             </div>
           ) : (
             <>
               <Link to={`${urlBase}/searches`}>
-                <div className="menu-item">
+                <div className={`menu-item ${iconHolderClass}`}>
                   <Search className="h-4 w-4" />
                   Search
                 </div>
               </Link>
               <Link to={`${urlBase}/downloads`}>
-                <div className="menu-item">
+                <div className={`menu-item ${iconHolderClass}`}>
                   <Download className="h-4 w-4" />
                   Downloads
                 </div>
               </Link>
               <Link to={`${urlBase}/uploads`}>
-                <div className="menu-item">
+                <div className={`menu-item ${iconHolderClass}`}>
                   <Upload className="h-4 w-4" />
                   Uploads
                 </div>
               </Link>
               <Link to={`${urlBase}/rooms`}>
-                <div className="menu-item">
+                <div className={`menu-item ${iconHolderClass}`}>
                   <MessagesSquare className="h-4 w-4" />
                   Rooms
                 </div>
               </Link>
               <Link to={`${urlBase}/chat`}>
-                <div className="menu-item">
+                <div className={`menu-item ${iconHolderClass}`}>
                   <MessageCircle className="h-4 w-4" />
                   Chat
                 </div>
               </Link>
               <Link to={`${urlBase}/users`}>
-                <div className="menu-item">
+                <div className={`menu-item ${iconHolderClass}`}>
                   <UsersIcon className="h-4 w-4" />
                   Users
                 </div>
               </Link>
               <Link to={`${urlBase}/browse`}>
-                <div className="menu-item">
+                <div className={`menu-item ${iconHolderClass}`}>
                   <FolderOpen className="h-4 w-4" />
                   Browse
                 </div>
@@ -372,6 +382,7 @@ const App = () => {
             <ModeSpecificConnectButton
               connectionWatchdog={connectionWatchdog}
               controller={controller}
+              iconHolderClass={iconHolderClass}
               mode={mode}
               pendingReconnect={pendingReconnect}
               server={server}
@@ -379,8 +390,8 @@ const App = () => {
             />
           </div>
           {(pendingReconnect || pendingRestart || pendingShareRescan) && (
-            <div className="menu-item">
-              <div className="menu-icon-group relative">
+            <div className={`menu-item ${iconHolderClass}`}>
+              <div className={`menu-icon-group relative ${iconHolderClass}`}>
                 <Link to={`${urlBase}/system/info`}>
                   <CircleAlert className="h-4 w-4 text-yellow-500" />
                 </Link>
@@ -391,7 +402,7 @@ const App = () => {
           {isUpdateAvailable && (
             <Dialog>
               <DialogTrigger className="menu-item">
-                <div className="menu-icon-group relative">
+                <div className={`menu-icon-group relative ${iconHolderClass}`}>
                   <Megaphone className="h-4 w-4 text-yellow-500" />
                 </div>
                 New Version!
@@ -415,7 +426,7 @@ const App = () => {
             </Dialog>
           )}
           <Link to={`${urlBase}/system`}>
-            <div className="menu-item">
+            <div className={`menu-item ${iconHolderClass}`}>
               <Settings className="h-4 w-4" />
               System
             </div>

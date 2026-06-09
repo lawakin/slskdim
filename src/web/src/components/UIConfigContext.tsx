@@ -76,6 +76,11 @@ export const UIConfigProvider = ({
       '--slskdim-nav-background',
       storedConfig.sidebar.background_color,
     );
+
+    element.style.setProperty(
+      '--slskdim-nav-size',
+      storedConfig.sidebar.barSize + 'px',
+    );
   }, [storedConfig]);
 
   return (
