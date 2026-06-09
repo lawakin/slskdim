@@ -10,7 +10,10 @@ export type ByteUnit =
   | 'ZB';
 
 export const formatSeconds = (seconds: number | undefined): string => {
-  if (seconds === undefined) return '';
+  if (seconds === undefined) {
+    return '';
+  }
+
   const date = new Date(1_970, 0, 1);
   date.setSeconds(seconds);
   if (seconds >= 3_600) {
@@ -25,7 +28,9 @@ export const formatBytesAsUnit = (
   unit: ByteUnit,
   decimals = 2,
 ): number | string => {
-  if (unit === 'B') return bytes + ' ' + unit;
+  if (unit === 'B') {
+    return bytes + ' ' + unit;
+  }
 
   const k = 1_024;
   const dm = decimals < 0 ? 0 : decimals;
@@ -46,7 +51,9 @@ export const formatBytesAsUnit = (
 };
 
 export const formatBytes = (bytes: number, decimals = 2): string => {
-  if (bytes === 0) return '0 B';
+  if (bytes === 0) {
+    return '0 B';
+  }
 
   const k = 1_024;
   const dm = decimals < 0 ? 0 : decimals;
@@ -69,7 +76,7 @@ export const formatBytes = (bytes: number, decimals = 2): string => {
   );
 };
 
-export const formatDate = (date: string | Date): string =>
+export const formatDate = (date: Date | string): string =>
   new Date(date).toLocaleString();
 
 export const getFileName = (fullPath: string): string =>
@@ -90,15 +97,15 @@ export const getDirectoryName = (fullPath: string): string => {
 };
 
 export const formatAttributes = ({
+  bitDepth,
   bitRate,
   isVariableBitRate,
-  bitDepth,
   sampleRate,
 }: {
-  bitDepth: number | null;
-  bitRate: number | null;
+  bitDepth: null | number;
+  bitRate: null | number;
   isVariableBitRate: boolean | null;
-  sampleRate: number | null;
+  sampleRate: null | number;
 }): string => {
   const isLossless = Boolean(sampleRate) && Boolean(bitDepth);
 

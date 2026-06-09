@@ -7,6 +7,7 @@ import ShareTable from './ShareTable';
 import { Separator } from '@/components/ui/separator';
 import { type ShareState } from '@/types';
 import { useEffect, useState } from 'react';
+import { toErrorMessage } from '@/lib/utils';
 import { toast } from 'react-toastify';
 
 const ScanButton = ({ rescan, working }) => (
@@ -66,7 +67,7 @@ const Shares = ({ state }: { readonly state?: ShareState }) => {
       setShares(flattened);
     } catch (error) {
       console.error(error);
-      toast.error(error?.response?.data ?? error?.message ?? error);
+      toast.error(toErrorMessage(error));
     } finally {
       setLoading(false);
     }
@@ -93,7 +94,7 @@ const Shares = ({ state }: { readonly state?: ShareState }) => {
       await sharesLibrary.rescan();
     } catch (error) {
       console.error(error);
-      toast.error(error?.response?.data ?? error?.message ?? error);
+      toast.error(toErrorMessage(error));
     } finally {
       setWorking(false);
     }
@@ -105,12 +106,7 @@ const Shares = ({ state }: { readonly state?: ShareState }) => {
       await sharesLibrary.cancel();
     } catch (error) {
       console.error(error);
-      toast.error(
-        error?.response?.data ??
-          error?.message ??
-          error ??
-          'Failed to cancel the scan',
-      );
+      toast.error(toErrorMessage(error));
     } finally {
       setWorking(false);
     }

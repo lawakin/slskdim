@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from '../../ui/dialog';
 import { useEffect, useState } from 'react';
+import { toErrorMessage } from '@/lib/utils';
 import { toast } from 'react-toastify';
 
 const DebugModal = ({
@@ -27,12 +28,7 @@ const DebugModal = ({
       setDebugView(await getCurrentDebugView());
     } catch (error) {
       console.error(error);
-      toast.error(
-        (error as { message?: string; response?: { data?: string } })?.response
-          ?.data ??
-          (error as Error)?.message ??
-          String(error),
-      );
+      toast.error(toErrorMessage(error));
     } finally {
       setLoading(false);
     }

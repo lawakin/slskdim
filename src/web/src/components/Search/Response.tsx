@@ -15,6 +15,7 @@ import {
   X,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { toErrorMessage } from '@/lib/utils';
 import { toast } from 'react-toastify';
 
 type SelectableFile = SearchFile & { locked?: boolean; selected: boolean };
@@ -133,12 +134,7 @@ const Response = ({
       }
     } catch (outerError) {
       console.error(outerError);
-      toast.error(
-        (outerError as { message?: string; response?: { data?: string } })
-          ?.response?.data ??
-          (outerError as Error)?.message ??
-          String(outerError),
-      );
+      toast.error(toErrorMessage(outerError));
     } finally {
       setFetchingDirectoryContents(false);
     }

@@ -4,6 +4,7 @@ import { LoaderSegment, PlaceholderSegment } from '../Shared';
 import TransferGroup from './TransferGroup';
 import TransfersHeader from './TransfersHeader';
 import React, { useEffect, useMemo, useState } from 'react';
+import { toErrorMessage } from '@/lib/utils';
 import { toast } from 'react-toastify';
 
 const Transfers = ({ direction, server }) => {
@@ -20,7 +21,7 @@ const Transfers = ({ direction, server }) => {
       setTransfers(response);
     } catch (error) {
       console.error(error);
-      toast.error(error?.response?.data ?? error?.message ?? error);
+      toast.error(toErrorMessage(error));
     }
   };
 
@@ -62,7 +63,7 @@ const Transfers = ({ direction, server }) => {
       if (!suppressStateChange) setRetrying(false);
     } catch (error) {
       console.error(error);
-      toast.error(error?.response?.data ?? error?.message ?? error);
+      toast.error(toErrorMessage(error));
       if (!suppressStateChange) setRetrying(false);
     }
   };
@@ -86,7 +87,7 @@ const Transfers = ({ direction, server }) => {
       if (!suppressStateChange) setCancelling(false);
     } catch (error) {
       console.error(error);
-      toast.error(error?.response?.data ?? error?.message ?? error);
+      toast.error(toErrorMessage(error));
       if (!suppressStateChange) setCancelling(false);
     }
   };
@@ -110,7 +111,7 @@ const Transfers = ({ direction, server }) => {
       if (!suppressStateChange) setRemoving(false);
     } catch (error) {
       console.error(error);
-      toast.error(error?.response?.data ?? error?.message ?? error);
+      toast.error(toErrorMessage(error));
       if (!suppressStateChange) setRemoving(false);
     }
   };

@@ -8,6 +8,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import SearchDetail from './Detail/SearchDetail';
 import SearchList from './List/SearchList';
+import { toErrorMessage } from '@/lib/utils';
 import { type ServerState } from '@/types';
 import { Loader2, Plus, Search as SearchIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -141,9 +142,7 @@ const Searches = ({ server }: { readonly server: ServerState }) => {
       }
     } catch (createError) {
       console.error(createError);
-      toast.error(
-        createError?.response?.data ?? createError?.message ?? createError,
-      );
+      toast.error(toErrorMessage(createError));
       setCreating(false);
     }
   };
@@ -163,7 +162,7 @@ const Searches = ({ server }: { readonly server: ServerState }) => {
       setRemoving(false);
     } catch (error_) {
       console.error(error_);
-      toast.error(error?.response?.data ?? error?.message ?? error);
+      toast.error(toErrorMessage(error_));
       setRemoving(false);
     }
   };
@@ -176,11 +175,7 @@ const Searches = ({ server }: { readonly server: ServerState }) => {
       setStopping(false);
     } catch (stoppingError) {
       console.error(stoppingError);
-      toast.error(
-        stoppingError?.response?.data ??
-          stoppingError?.message ??
-          stoppingError,
-      );
+      toast.error(toErrorMessage(stoppingError));
       setStopping(false);
     }
   };
