@@ -70,7 +70,7 @@ export const UI_CONFIG_SCHEMA = {
   primary_foreground_color: {
     type: 'color' as const,
     label: 'Primary Foreground Color',
-    default: '#cdab8f',
+    default: '#4b4b4bff',
   },
   muted_foreground_color: {
     type: 'color' as const,
