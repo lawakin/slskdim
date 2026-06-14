@@ -11,4 +11,13 @@ export default defineConfig({
     },
     dedupe: ['@codemirror/state', '@codemirror/view'],
   },
+  build: {
+    chunkSizeWarningLimit: 2000,
+    rolldownOptions: {
+      onwarn(warning, warn) {
+        if (warning.code === 'INVALID_ANNOTATION') return
+        warn(warning)
+      },
+    },
+  },
 })

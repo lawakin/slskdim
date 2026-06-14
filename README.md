@@ -14,6 +14,22 @@ slskdim (name comes form slskd **im**proved, similar to vim) is a fork of [slskd
 
 Early stages. I'll keep writing things in as they happen
 
+## Using the UI
+
+Since there are no plans to merge this into the upstream repo, you can inject the UI manually by replacing the `wwwroot` directory in your slskd installation with the output of `vite build` (found in `src/web/dist` after building).
+
+> **Note:** building the container directly from this repo is not recommended. While I try my best to keep things in sync, I cannot guarantee that the C# backend is up to date with upstream at any given commit.
+
+### Docker users
+
+`inject-ui.sh` is provided to automate this for Docker users. It builds the frontend and copies it directly into a running slskd container's `wwwroot`:
+
+```
+./inject-ui.sh -c <container-name-or-id>
+```
+
+Run `./inject-ui.sh --help` for options.
+
 ## A note on AI-generated code
 
 This project uses AI-assisted development. The code that comes out of it is reviewed and curated before it lands here, but LLMs still makes lots mistakes.
