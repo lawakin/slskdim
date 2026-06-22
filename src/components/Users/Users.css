@@ -1,0 +1,21 @@
+.users-container {
+  padding-left: var(--content-padding-h);
+  padding-right: var(--content-padding-h);
+  max-width: var(--content-max-width) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.users-container:last-child {
+  margin-bottom: var(--card-bottom-margin);
+}
+
+.users-segment {
+  margin-top: 15px !important;
+  height: var(--segment-header-height) !important;
+}
+
+.users-user {
+  margin-top: 15px !important;
+  min-height: var(--segment-header-height);
+}

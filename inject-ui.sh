@@ -41,9 +41,8 @@ if [ -z "$CONTAINER" ]; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-WEB_DIR="$SCRIPT_DIR/src/web"
 
-cd "$WEB_DIR"
+cd "$SCRIPT_DIR"
 echo "building frontend..."
 npm run build
 
