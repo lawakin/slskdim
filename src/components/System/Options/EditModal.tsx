@@ -91,7 +91,7 @@ const EditModal = ({
       }}
       open={open}
     >
-      <DialogContent className="flex max-w-4xl flex-col gap-0 p-0">
+      <DialogContent className="flex max-h-[85vh] flex-col gap-0 p-0 sm:max-w-4xl">
         <DialogHeader className="border-b p-4">
           <DialogTitle>Edit Options</DialogTitle>
           {!loading && location && (
@@ -111,15 +111,16 @@ const EditModal = ({
               }
             >
               <CodeEditor
+                maxHeight="60vh"
+                minHeight="240px"
                 onChange={(value) => update(value ?? '')}
-                style={{ minHeight: 500 }}
                 theme="dark"
                 value={yaml}
               />
             </div>
           </Switch>
         </div>
-        <DialogFooter className="border-t p-4">
+        <DialogFooter className="mx-0 mb-0 border-t p-4">
           {(yamlError || updateError) && (
             <p className="mr-auto text-sm text-destructive">
               {(yamlError ?? '') + (updateError ?? '')}

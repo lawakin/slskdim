@@ -7,6 +7,7 @@ import {
 import DebugModal from './DebugModal';
 import EditModal from './EditModal';
 import { Separator } from '@/components/ui/separator';
+import { Edit } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import YAML from 'yaml';
 
@@ -16,7 +17,9 @@ const DebugButton = ({
   setDebugModal,
   ...props
 }) => {
-  if (!remoteConfiguration || !debug) return null;
+  if (!remoteConfiguration || !debug) {
+    return null;
+  }
 
   return (
     <ShrinkableButton
@@ -45,7 +48,7 @@ const EditButton = ({ remoteConfiguration, setEditModal, ...props }) => {
 
   return (
     <ShrinkableButton
-      icon="edit"
+      icon={<Edit />}
       mediaQuery="(max-width: 516px)"
       onClick={() => setEditModal(true)}
       {...props}

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { toErrorMessage } from '@/lib/utils';
 import { type ShareState } from '@/types';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, XIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -28,7 +28,7 @@ const CancelButton = ({ cancel, working }) => (
   <ShrinkableButton
     // color="red"
     disabled={working}
-    icon="x"
+    icon={<XIcon />}
     mediaQuery="(max-width: 516px)"
     onClick={() => cancel()}
   >

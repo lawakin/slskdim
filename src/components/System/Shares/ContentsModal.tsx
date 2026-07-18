@@ -56,11 +56,13 @@ const ContentsModal = ({
   return (
     <Dialog
       onOpenChange={(o) => {
-        if (!o) onClose();
+        if (!o) {
+          onClose();
+        }
       }}
       open={Boolean(share)}
     >
-      <DialogContent className="flex max-w-4xl flex-col gap-0 p-0">
+      <DialogContent className="flex max-h-[85vh] flex-col gap-0 p-0 sm:max-w-4xl">
         <DialogHeader className="border-b p-4">
           <DialogTitle>{localPath}</DialogTitle>
         </DialogHeader>
@@ -69,13 +71,14 @@ const ContentsModal = ({
             <CodeEditor
               basicSetup={false}
               editable={false}
-              style={{ minHeight: 500 }}
+              maxHeight="60vh"
+              minHeight="240px"
               theme="dark"
               value={contents}
             />
           </Switch>
         </div>
-        <DialogFooter className="border-t p-4">
+        <DialogFooter className="mx-0 mb-0 border-t p-4">
           <Button
             onClick={onClose}
             variant="outline"

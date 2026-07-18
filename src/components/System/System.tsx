@@ -16,7 +16,7 @@ import { Redirect, useHistory, useRouteMatch } from 'react-router-dom';
 const System = ({
   options = {},
   state = {},
-  theme = '',
+  theme = 'dark',
 }: {
   readonly options?: ApplicationOptions;
   readonly state?: ApplicationState;

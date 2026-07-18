@@ -5,7 +5,7 @@ import { Loader2, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 
-type Direction = 'upload' | 'download';
+type Direction = 'download' | 'upload';
 
 const clear = async ({
   direction,
@@ -33,6 +33,7 @@ const Data = () => {
         transfers are displayed. If you're having trouble with either page, try
         using the buttons below to remove completed transfers.
       </p>
+      <p>However, due to the changes in this fork, its likely not needed</p>
       <div className="flex gap-2">
         <Button
           disabled={up}
