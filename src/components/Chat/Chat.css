@@ -29,6 +29,7 @@
   overscroll-behavior-y: contain;
   scroll-snap-type: y proximity;
   display: grid;
+  align-content: start;
   height: calc(100vh - var(--chat-input-offset));
 }
 

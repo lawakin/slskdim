@@ -43,9 +43,15 @@ const ChatMessageHistory = memo(
     readonly selfUsername: string;
   }) => (
     <>
-      {messages.map((message) => (
+      {messages.map((message, index) => {
+        const senderOf = (item: ChatMessage) =>
+          item.direction === 'Out' ? selfUsername : item.username;
+        const previous = messages[index - 1];
+        const newSender = index > 0 && senderOf(previous) !== senderOf(message);
+
+        return (
         <div
-          className={`chat-message ${message.direction === 'Out' ? 'chat-message-self' : ''} h-fit`}
+          className={`chat-message ${message.direction === 'Out' ? 'chat-message-self' : ''} ${newSender ? 'mt-3' : ''} h-fit`}
           key={`${message.timestamp}+${message.message}`}
         >
           <span className="chat-message-time">
@@ -56,7 +62,8 @@ const ChatMessageHistory = memo(
           </span>
           <span>{message.message}</span>
         </div>
-      ))}
+        );
+      })}
       <div id="chat-history-scroll-anchor" />
     </>
   ),
@@ -207,7 +214,7 @@ const Chat = ({ state: appState }: { readonly state: ApplicationState }) => {
       </div>
       {active ? (
         <Card className="chat-active-card">
-          <CardContent onClick={() => messageRef.current?.focus()}>
+          <CardContent>
             <CardHeader className="flex items-center">
               <Circle className="h-3 w-3 text-green-500" />
               {active}
