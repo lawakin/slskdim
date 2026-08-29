@@ -1,3 +1,4 @@
+import { formatBytes } from '@/lib/util';
 import { type UserDirectory } from '../../lib/users';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Folder, FolderOpen, Lock } from 'lucide-react';
@@ -41,7 +42,12 @@ const flattenTree = (roots: TreeNode[]): FlatNode[] => {
 
     const n = top.nodes[top.index];
     const isLast = top.index === top.nodes.length - 1;
-    result.push({ depth: top.depth, isLast, node: n, parentLines: top.parentLines });
+    result.push({
+      depth: top.depth,
+      isLast,
+      node: n,
+      parentLines: top.parentLines,
+    });
     top.index++;
 
     if (n.children.length > 0) {
@@ -49,7 +55,10 @@ const flattenTree = (roots: TreeNode[]): FlatNode[] => {
         depth: top.depth + 1,
         index: 0,
         nodes: n.children,
-        parentLines: [...top.parentLines, { continues: !isLast, depth: top.depth }],
+        parentLines: [
+          ...top.parentLines,
+          { continues: !isLast, depth: top.depth },
+        ],
       });
     }
   }
@@ -58,6 +67,20 @@ const flattenTree = (roots: TreeNode[]): FlatNode[] => {
 };
 
 const GUIDE_WIDTH = 16;
+
+const formatCaption = (fileCount: number, dirCount: number) => {
+  const parts: string[] = [];
+  if (fileCount > 0) parts.push(`${fileCount} file${fileCount === 1 ? '' : 's'}`);
+  if (dirCount > 0)
+    parts.push(`${dirCount} director${dirCount === 1 ? 'y' : 'ies'}`);
+  return parts.length > 0 ? parts.join(', ') : '0 files';
+};
+
+const countDirectories = (node: TreeNode): number =>
+  (node.children ?? []).reduce(
+    (sum, child) => sum + 1 + countDirectories(child),
+    0,
+  );
 
 const DirectoryTree = ({
   onSelect,
@@ -98,11 +121,15 @@ const DirectoryTree = ({
             parentLines,
           } = flatNodes[virtualItem.index];
           const selected = d.name === selectedDirectoryName;
-          const colorClass = d.locked
-            ? 'browse-folderlist-icon locked'
-            : selected
-              ? 'browse-folderlist-icon selected'
-              : 'browse-folderlist-icon';
+          const hasSubfolders = d.children.length > 0;
+          const iconClass = [
+            'browse-folderlist-icon h-4 w-4 shrink-0',
+            d.locked
+              ? 'locked text-muted-foreground'
+              : selected
+                ? 'text-blue-500'
+                : 'text-muted-foreground',
+          ].join(' ');
 
           return (
             <div
@@ -161,11 +188,16 @@ const DirectoryTree = ({
 
               <div className="flex items-center gap-1 ml-1">
                 {d.locked ? (
-                  <Lock className={colorClass} />
+                  <Lock className={iconClass} />
                 ) : selected ? (
-                  <FolderOpen className={colorClass} />
+                  <FolderOpen className={iconClass} />
+                ) : hasSubfolders ? (
+                  <Folder
+                    className={iconClass}
+                    fill="currentColor"
+                  />
                 ) : (
-                  <Folder className={colorClass} />
+                  <Folder className={iconClass} />
                 )}
                 <button
                   className={
@@ -177,6 +209,12 @@ const DirectoryTree = ({
                   type="button"
                 >
                   {d.name.split('\\').pop()?.split('/').pop()}
+                  <span className="browse-folderlist-caption ml-2 text-muted-foreground">
+                    {formatCaption(
+                      d.fileCount,
+                      countDirectories(d),
+                    )}
+                  </span>
                 </button>
               </div>
             </div>

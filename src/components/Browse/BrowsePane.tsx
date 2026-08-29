@@ -36,15 +36,8 @@ const BrowsePane = ({
   }
 
   if (browseError) {
-    return (
-      <span className="browse-error">Failed to browse {username}</span>
-    );
+    return <span className="browse-error">Failed to browse {username}</span>;
   }
-
-  const files = (selectedDirectory?.files ?? []).map((f) => ({
-    ...f,
-    filename: `${selectedDirectory?.name}${separator}${f.filename}`,
-  }));
 
   const emptyTree = tree.length === 0;
 
@@ -66,9 +59,7 @@ const BrowsePane = ({
               {`${info.files + info.lockedFiles} files in ${info.directories + info.lockedDirectories} directories (including ${info.lockedFiles} files in ${info.lockedDirectories} locked directories)`}
             </p>
             <DirectoryTree
-              onSelect={(_, value) =>
-                onSelectDirectory({ ...value, children: [] })
-              }
+              onSelect={(_, value) => onSelectDirectory(value)}
               selectedDirectoryName={selectedDirectory?.name}
               tree={tree}
             />
@@ -77,11 +68,12 @@ const BrowsePane = ({
       )}
       {selectedDirectory?.name && (
         <Directory
-          files={files}
+          directory={selectedDirectory}
           locked={selectedDirectory.locked}
           marginTop={-20}
-          name={selectedDirectory.name}
           onClose={() => onSelectDirectory(null)}
+          onNavigate={onSelectDirectory}
+          separator={separator}
           username={username}
         />
       )}

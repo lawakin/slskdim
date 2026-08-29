@@ -31,6 +31,30 @@ export const download = ({
   username: string;
 }) => api.post(`/transfers/downloads/${encodeURIComponent(username)}`, files);
 
+// Enqueue a set of files as one batch rooted at `options.destination` (a path
+// relative to the configured download directory), so remote folder structure is
+// preserved on disk.
+export const enqueueBatch = ({
+  username,
+  files = [],
+  id,
+  searchId,
+  options,
+}: {
+  files?: Array<Pick<TransferFile, 'filename' | 'size'>>;
+  id?: string;
+  options?: { destination?: string; externalId?: string };
+  searchId?: string;
+  username: string;
+}) =>
+  api.post('/transfers/downloads/batches', {
+    files,
+    id,
+    options,
+    searchId,
+    username,
+  });
+
 export const cancel = ({
   direction,
   username,

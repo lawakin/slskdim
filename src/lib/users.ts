@@ -51,8 +51,14 @@ export const browse = async ({
 }): Promise<BrowseResponse> =>
   (await api.get<BrowseResponse>(`/users/${encodeURIComponent(username)}/browse`)).data;
 
+export type BrowseProgress = {
+  percentComplete: number;
+};
+
 export const getBrowseStatus = ({ username }: { username: string }) =>
-  api.get<number>(`/users/${encodeURIComponent(username)}/browse/status`);
+  api.get<BrowseProgress>(
+    `/users/${encodeURIComponent(username)}/browse/status`,
+  );
 
 export const getDirectoryContents = async ({
   username,

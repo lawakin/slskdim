@@ -93,11 +93,3 @@
 .browse-folderlist-icon.locked {
   opacity: 0.5 !important;
 }
-
-.browse-folderlist-icon {
-  color: var(--slskd-browse-folderlist-header-color) !important;
-}
-
-.browse-folderlist-icon.selected {
-  color: var(--slskd-browse-folderlist-header-selected-color) !important;
-}
