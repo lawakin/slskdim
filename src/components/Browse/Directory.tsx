@@ -341,7 +341,7 @@ const Directory = ({
             <Loader2 className="h-5 w-5 animate-spin" />
           )}
           {downloadRequest === 'complete' && (
-            <Check className="h-5 w-5 text-green-500" />
+            <Check className="h-5 w-5 text-good" />
           )}
           {downloadRequest === 'error' && (
             <span className="flex items-center gap-1 text-sm text-red-500">

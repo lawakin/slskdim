@@ -154,27 +154,29 @@ const Response = ({
     <Card className="result-card">
       <CardContent>
         <div className="flex items-center gap-2">
-          <button
+          <Button
             onClick={() => setIsFolded((previous) => !previous)}
-            type="button"
+            size="icon-sm"
+            variant="ghost"
           >
             {isFolded ? (
               <ChevronRight className="h-4 w-4" />
             ) : (
               <ChevronDown className="h-4 w-4" />
             )}
-          </button>
+          </Button>
           <div
-            className={`h-2 w-2 rounded-full ${free ? 'bg-green-500' : 'bg-yellow-500'}`}
+            className={`h-2 w-2 rounded-full ${free ? 'bg-good' : 'bg-yellow-500'}`}
           />
           <span className="font-medium">{response.username}</span>
-          <button
-            className="close-button ml-auto text-red-500 hover:text-red-700"
+          <Button
+            className="ml-auto text-red-500 hover:text-red-700"
             onClick={onHide}
-            type="button"
+            size="icon-sm"
+            variant="ghost"
           >
             <X className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
         <div className="result-meta mt-1 text-sm text-muted-foreground">
           Upload Speed: {formatBytes(response.uploadSpeed)}/s, Free Upload Slot:{' '}
@@ -187,24 +189,19 @@ const Response = ({
               disabled={downloadRequest === 'inProgress'}
               files={tree[directory]}
               footer={
-                <button
+                <Button
+                  className="w-full"
                   disabled={fetchingDirectoryContents}
                   onClick={() => getFullDirectory(response.username, directory)}
-                  style={{
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    width: '100%',
-                  }}
-                  type="button"
+                  variant="ghost"
                 >
                   {fetchingDirectoryContents ? (
-                    <Loader2 className="inline h-4 w-4 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    <Search className="inline h-4 w-4" />
-                  )}{' '}
+                    <Search className="h-4 w-4" />
+                  )}
                   Search for Additional Files in This Directory
-                </button>
+                </Button>
               }
               key={directory}
               locked={tree[directory].some((file) => file.locked)}
@@ -229,7 +226,7 @@ const Response = ({
             <Loader2 className="h-5 w-5 animate-spin" />
           )}
           {downloadRequest === 'complete' && (
-            <Check className="h-5 w-5 text-green-500" />
+            <Check className="h-5 w-5 text-good" />
           )}
           {downloadRequest === 'error' && downloadError && (
             <span className="text-sm text-red-500">

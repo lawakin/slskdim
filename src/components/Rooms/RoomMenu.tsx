@@ -24,7 +24,7 @@ const RoomMenu = ({
           onClick={() => onRoomChange(name)}
           type="button"
         >
-          <Circle className="h-2 w-2 text-green-500" />
+          <Circle className="h-2 w-2 text-good" />
           {name}
         </button>
       ))}

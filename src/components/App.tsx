@@ -19,6 +19,7 @@ import {
 } from '../types';
 import AppContext from './AppContext';
 import Browse from './Browse/Browse';
+import Dashboard from './Dashboard/Dashboard';
 import Chat from './Chat/Chat';
 import LoginForm from './LoginForm';
 import Rooms from './Rooms/Rooms';
@@ -39,6 +40,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import {
+  BarChart3,
   Bot,
   CircleAlert,
   Clock,
@@ -88,7 +90,7 @@ const ModeSpecificConnectButton = ({
 
     const plugColor =
       controller?.state === 'Connected'
-        ? 'text-green-500'
+        ? 'text-good'
         : isTransitioning
           ? 'text-yellow-500'
           : 'text-gray-400';
@@ -121,7 +123,7 @@ const ModeSpecificConnectButton = ({
       >
         <div className="menu-icon-group relative">
           <Plug
-            className={`h-4 w-4 ${pendingReconnect ? 'text-yellow-500' : 'text-green-500'}`}
+            className={`h-4 w-4 ${pendingReconnect ? 'text-yellow-500' : 'text-good'}`}
           />
           {user?.privileges?.isPrivileged && (
             <Star className="menu-icon-no-shadow absolute -bottom-1 -right-1 h-2 w-2 text-yellow-400" />
@@ -144,7 +146,7 @@ const ModeSpecificConnectButton = ({
 
   if (server?.isConnecting) {
     IconComponent = Loader2;
-    iconColorClass = 'text-green-500 animate-spin';
+    iconColorClass = 'text-good animate-spin';
     label = 'Connecting...';
   }
 
@@ -336,6 +338,12 @@ const App = () => {
             </div>
           ) : (
             <>
+              <Link to={`${urlBase}/dashboard`}>
+                <div className={`menu-item ${iconHolderClass}`}>
+                  <BarChart3 className="h-4 w-4" />
+                  Dashboard
+                </div>
+              </Link>
               <Link to={`${urlBase}/searches`}>
                 <div className={`menu-item ${iconHolderClass}`}>
                   <Search className="h-4 w-4" />
@@ -486,6 +494,16 @@ const App = () => {
               </Switch>
             ) : (
               <Switch>
+                <Route
+                  path={`${urlBase}/dashboard`}
+                  render={() =>
+                    withTokenCheck(
+                      <div className="view">
+                        <Dashboard server={server} />
+                      </div>,
+                    )
+                  }
+                />
                 <Route
                   path={`${urlBase}/searches/:id?`}
                   render={() =>

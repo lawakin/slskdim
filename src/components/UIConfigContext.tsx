@@ -72,6 +72,27 @@ export const UIConfigProvider = ({
       '--slskdim-destructive',
       storedConfig.destructive_color,
     );
+    element.style.setProperty('--slskdim-good', storedConfig.good_color);
+    element.style.setProperty(
+      '--slskdim-card-radius',
+      storedConfig.radius.card + 'em',
+    );
+    element.style.setProperty(
+      '--slskdim-input-radius',
+      storedConfig.radius.input + 'em',
+    );
+    element.style.setProperty(
+      '--slskdim-button-radius',
+      storedConfig.radius.button + 'em',
+    );
+    element.style.setProperty(
+      '--slskdim-tiny-radius',
+      storedConfig.radius.tiny_button + 'em',
+    );
+    element.style.setProperty(
+      '--slskdim-tab-radius',
+      storedConfig.radius.tab + 'em',
+    );
     element.style.setProperty(
       '--slskdim-nav-background',
       storedConfig.sidebar.background_color,

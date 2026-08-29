@@ -15,6 +15,23 @@ import {
   SelectValue,
 } from '../../ui/select';
 import { useUIConfig } from '../../UIConfigContext';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+
+const FOLD_KEY = 'slskd-appearance-folded';
+
+const readFolded = (): Record<string, boolean> => {
+  try {
+    return JSON.parse(localStorage.getItem(FOLD_KEY) || '{}');
+  } catch {
+    return {};
+  }
+};
+
+const writeFolded = (key: string, folded: boolean) => {
+  const next = { ...readFolded(), [key]: folded };
+  localStorage.setItem(FOLD_KEY, JSON.stringify(next));
+};
 
 type ConfigFieldProps = {
   readonly field: FieldSchema;
@@ -93,25 +110,70 @@ type ConfigGroupProps = {
   readonly values: Record<string, unknown>;
 };
 
+type ConfigGroupNodeProps = {
+  readonly fields: ConfigSchema;
+  readonly groupKey: string;
+  readonly label: string;
+  readonly onChange: (key: string, value: unknown) => void;
+  readonly values: Record<string, unknown>;
+};
+
+const ConfigGroupNode = ({
+  fields,
+  groupKey,
+  label,
+  onChange,
+  values,
+}: ConfigGroupNodeProps) => {
+  const [folded, setFolded] = useState(() => readFolded()[groupKey] ?? false);
+
+  const toggle = () => {
+    setFolded((previous) => {
+      const next = !previous;
+      writeFolded(groupKey, next);
+      return next;
+    });
+  };
+
+  return (
+    <div className="flex flex-col gap-2">
+      <button
+        className="flex items-center gap-1 text-sm font-medium text-muted-foreground"
+        onClick={toggle}
+        type="button"
+      >
+        {folded ? (
+          <ChevronRight className="h-4 w-4" />
+        ) : (
+          <ChevronDown className="h-4 w-4" />
+        )}
+        {label}
+      </button>
+      {!folded && (
+        <div className="flex flex-col gap-4 pl-4 border-l">
+          <ConfigGroup
+            onChange={(subKey, v) => onChange(`${groupKey}.${subKey}`, v)}
+            schema={fields}
+            values={(values[groupKey] as Record<string, unknown>) ?? {}}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
 const ConfigGroup = ({ onChange, schema, values }: ConfigGroupProps) => (
   <>
     {Object.entries(schema).map(([key, field]) =>
       field.type === 'group' ? (
-        <div
-          className="flex flex-col gap-2"
+        <ConfigGroupNode
+          fields={field.fields}
+          groupKey={key}
           key={key}
-        >
-          <span className="text-sm font-medium text-muted-foreground">
-            {field.label}
-          </span>
-          <div className="flex flex-col gap-4 pl-4 border-l">
-            <ConfigGroup
-              onChange={(subKey, v) => onChange(`${key}.${subKey}`, v)}
-              schema={field.fields}
-              values={(values[key] as Record<string, unknown>) ?? {}}
-            />
-          </div>
-        </div>
+          label={field.label}
+          onChange={onChange}
+          values={values}
+        />
       ) : (
         <ConfigField
           field={field}

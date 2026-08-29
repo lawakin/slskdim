@@ -27,7 +27,7 @@ const Users = () => {
   const [user, setUser] = useState<UserData>();
   const [usernameInput, setUsernameInput] = useState('');
   const [selectedUsername, setSelectedUsername] = useState<string>('');
-  // eslint-disable-next-line react/hook-use-state
+   
   const [{ error, fetching }, setStatus] = useState({
     error: undefined,
     fetching: false,
@@ -144,7 +144,7 @@ const Users = () => {
               // raised
             >
               <div>
-                <User {...user} />
+                <User {...user} username={selectedUsername} />
               </div>
             </div>
           )}

@@ -27,7 +27,7 @@ export type FieldSchema =
   | ColorField
   | NumberField;
 
-// A group node — contains nested fields, not a leaf field itself
+// A group node, contains nested fields, not a leaf field itself
 type GroupField = {
   fields: ConfigSchema;
   label: string;
@@ -91,6 +91,60 @@ export const UI_CONFIG_SCHEMA = {
     type: 'color' as const,
     label: 'Destructive Color',
     default: '#cc0000',
+  },
+  good_color: {
+    type: 'color' as const,
+    label: 'Good Color',
+    default: '#21ba45',
+  },
+  radius: {
+    type: 'group' as const,
+    label: 'Corner roundness',
+    // Values are `em` multipliers, not px: the radius scales with each
+    // control's own font size so big and small controls look consistent.
+    fields: {
+      card: {
+        type: 'number' as const,
+        label: 'Card Roundness (em)',
+        default: 0.8,
+        max: 3,
+        min: 0,
+        step: 0.05,
+      },
+      input: {
+        type: 'number' as const,
+        label: 'Input Field Roundness (em)',
+        default: 0.7,
+        max: 3,
+        min: 0,
+        step: 0.05,
+      },
+      button: {
+        type: 'number' as const,
+        label: 'Button Roundness (em)',
+        default: 0.7,
+        max: 3,
+        min: 0,
+        step: 0.05,
+      },
+      tiny_button: {
+        type: 'number' as const,
+        label: 'Tiny Control Roundness (em)',
+        // Squarer than regular buttons; used on xs buttons, checkboxes, etc.
+        default: 0.3,
+        max: 3,
+        min: 0,
+        step: 0.05,
+      },
+      tab: {
+        type: 'number' as const,
+        label: 'Tab Group Roundness (em)',
+        default: 0.7,
+        max: 3,
+        min: 0,
+        step: 0.05,
+      },
+    },
   },
   sidebar: {
     type: 'group' as const,

@@ -51,7 +51,7 @@ const BrowsePane = ({
       ) : (
         <Card className="browse-tree-card">
           <CardHeader className="flex items-center">
-            <Circle className="h-3 w-3 text-green-500" />
+            <Circle className="h-3 w-3 text-good" />
             {username}
           </CardHeader>
           <CardContent>

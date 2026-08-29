@@ -2,6 +2,7 @@ export { default as CodeEditor } from './CodeEditor';
 export { default as Div } from './Div';
 export { default as ErrorSegment } from './ErrorSegment';
 export { default as FileList } from './FileList';
+export { default as Graph, type GraphSeries, useDarkMode } from './Graph';
 export { default as LoaderSegment } from './LoaderSegment';
 export { default as Logo } from './Logo';
 export { default as Nbsp } from './Nbsp';

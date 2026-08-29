@@ -24,6 +24,12 @@
     --slskdim-border: #333333;
     --slskdim-ring: #555555;
     --slskdim-destructive: #cc0000;
+    --slskdim-good: #21ba45;
+    --slskdim-card-radius: 0.8em;
+    --slskdim-input-radius: 0.7em;
+    --slskdim-button-radius: 0.7em;
+    --slskdim-tiny-radius: 0.3em;
+    --slskdim-tab-radius: 0.7em;
 
     --slskdim-nav-size: 10px;
 }
@@ -43,6 +49,7 @@ body {
     --input: var(--slskdim-border);
     --ring: var(--slskdim-ring);
     --destructive: var(--slskdim-destructive);
+    --good: var(--slskdim-good);
 }
 
 .ui.table td,

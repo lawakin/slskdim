@@ -120,6 +120,28 @@ export const formatAttributes = ({
   return bitRate ? `${bitRate} Kbps` : '';
 };
 
+export const formatSpeed = (
+  bytesPerSecond: number | undefined,
+  decimals = 1,
+): string => {
+  if (!bytesPerSecond) return '0 B/s';
+  return `${formatBytes(bytesPerSecond, decimals)}/s`;
+};
+
+export const formatWait = (seconds: number | undefined): string => {
+  if (!seconds) return '0s';
+  if (seconds < 60) return `${Math.round(seconds)}s`;
+  return `${(seconds / 60).toFixed(1)}m`;
+};
+
+export const truncate = (
+  text: string | undefined,
+  maxLength: number,
+): string => {
+  if (!text) return '';
+  return text.length <= maxLength ? text : `${text.slice(0, maxLength)}...`;
+};
+
 export const sleep = (milliseconds: number): Promise<void> =>
   new Promise((resolve) => {
     setTimeout(resolve, milliseconds);
@@ -155,7 +177,7 @@ export const downloadFile = (
   temporaryLink.href = blobURL;
   temporaryLink.setAttribute('download', filename);
 
-  // Safari doesn't support the download attribute — fall back to _blank
+  // Safari doesn't support the download attribute
   if (typeof temporaryLink.download === 'undefined') {
     temporaryLink.setAttribute('target', '_blank');
   }

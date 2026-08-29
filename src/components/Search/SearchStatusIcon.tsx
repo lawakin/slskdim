@@ -13,13 +13,13 @@ const StatusIcon = ({ state }: { readonly state: string }) => {
     case 'Requested':
       return <Clock className="h-4 w-4" />;
     case 'InProgress':
-      return <Loader2 className="h-4 w-4 animate-spin text-green-500" />;
+      return <Loader2 className="h-4 w-4 animate-spin text-good" />;
     case 'Completed, TimedOut':
     case 'Completed, ResponseLimitReached':
     case 'Completed, FileLimitReached':
-      return <Check className="h-4 w-4 text-green-500" />;
+      return <Check className="h-4 w-4 text-good" />;
     case 'Completed, Cancelled':
-      return <StopCircle className="h-4 w-4 text-green-500" />;
+      return <StopCircle className="h-4 w-4 text-good" />;
     case 'Completed, Errored':
       return <X className="h-4 w-4 text-red-500" />;
     default:

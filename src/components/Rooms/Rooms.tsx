@@ -217,7 +217,7 @@ const Rooms = () => {
         <Card className="room-active-card">
           <CardContent onClick={() => messageRef.current?.focus()}>
             <CardHeader className="flex">
-              <Circle className="h-3 w-3 text-green-500" />
+              <Circle className="h-3 w-3 text-good" />
               {active}
               <button
                 className="close-button ml-auto"
@@ -264,7 +264,7 @@ const Rooms = () => {
                         type="button"
                         variant="ghost"
                       >
-                        <Send className="h-4 w-4 text-green-500" />
+                        <Send className="h-4 w-4 text-good" />
                       </Button>
                     </div>
                   </div>

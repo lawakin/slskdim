@@ -195,7 +195,7 @@ const RoomJoinModal = ({
                     >
                       <TableCell>
                         {selected === room.name && (
-                          <Check className="mr-1 inline h-3 w-3 text-green-500" />
+                          <Check className="mr-1 inline h-3 w-3 text-good" />
                         )}
                         {room.isPrivate && (
                           <Lock className="mr-1 inline h-3 w-3" />
